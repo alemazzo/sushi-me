@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.ExperimentalMaterial3Api
-import io.github.alemazzo.sushime.ui.navigation.SetupNavigator
+import io.github.alemazzo.sushime.ui.navigation.AppNavigator
 import io.github.alemazzo.sushime.ui.utils.MainScaffold
 
 @SuppressLint("CustomSplashScreen")
@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MainScaffold { navController, padding ->
-                SetupNavigator(navController = navController, padding = padding)
+                AppNavigator(navController = navController, padding = padding)
             }
         }
     }

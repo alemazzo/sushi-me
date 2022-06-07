@@ -7,6 +7,14 @@ import androidx.navigation.NavHostController
 import io.github.alemazzo.sushime.utils.NavBarItemFromRoute
 import io.github.alemazzo.sushime.utils.navigate
 
+/**
+ * Automatic detected navbar from currentRoute.
+ * If a route is present and it's part of a Navbar
+ * that navbar is display, otherwise no Navbar is displayed.
+ *
+ * @param currentRoute the actual route, if present
+ * @param navController the navigation controller
+ */
 @ExperimentalMaterial3Api
 @Composable
 fun BottomNavBar(currentRoute: Route?, navController: NavHostController) {
