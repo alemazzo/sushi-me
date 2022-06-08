@@ -6,8 +6,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
  * All possible navbars in the application:
  * - Navigate: the main one (Restaurants, Join, Settings).
  * - Order: the one for make an order (Menu, Cart).
- *
- *
  */
 @ExperimentalMaterial3Api
 sealed class Navbar(

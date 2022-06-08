@@ -9,6 +9,11 @@ import io.github.alemazzo.sushime.ui.navigation.Screen
 import io.github.alemazzo.sushime.ui.theme.SashimeTheme
 import io.github.alemazzo.sushime.utils.rememberCurrentRoute
 
+/**
+ * The default container of each page of the application.
+ * Manage the current route state in order to show/hide the
+ * bottom bar.
+ */
 @ExperimentalMaterial3Api
 @Composable
 fun MainScaffold(content: Screen) {

@@ -18,7 +18,7 @@ import io.github.alemazzo.sushime.ui.navigation.NavBarItemInfo
 import io.github.alemazzo.sushime.ui.navigation.Route
 
 @ExperimentalMaterial3Api
-fun NavGraphBuilder.SimpleRoute(route: Route, destination: @Composable () -> Unit) {
+fun NavGraphBuilder.addRoute(route: Route, destination: @Composable () -> Unit) {
     composable(route.path) { destination() }
 }
 

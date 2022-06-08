@@ -24,6 +24,12 @@ sealed class Route(
 ) {
 
     companion object {
+
+        /**
+         * The entry point of the application.
+         */
+        val StartingRoute = Route.Splash
+
         /**
          * Retrieve all the possible Route
          */
