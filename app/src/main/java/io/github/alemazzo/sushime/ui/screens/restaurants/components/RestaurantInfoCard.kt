@@ -1,4 +1,4 @@
-package io.github.alemazzo.sushime.ui.screens.navigate.components
+package io.github.alemazzo.sushime.ui.screens.restaurants.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -17,17 +17,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.github.alemazzo.sushime.R
 
-data class RestaurantInfo(val name: String, val description: String, val image: Painter)
+data class RestaurantInfo(val name: String, val description: String, val image: Int)
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RestaurantInfoCard(restaurantInfo: RestaurantInfo, paddingValues: PaddingValues) {
+fun RestaurantInfoCard(restaurantInfo: RestaurantInfo) {
     Card(
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(6.dp),
         modifier = Modifier
-            .padding(paddingValues)
             .clickable { },
     ) {
         Row(
@@ -46,7 +45,7 @@ fun RestaurantInfoCard(restaurantInfo: RestaurantInfo, paddingValues: PaddingVal
 
 @Composable
 fun RestaurantInfoCardImageSection(restaurantInfo: RestaurantInfo) {
-    RestaurantInfoCardImage(painter = restaurantInfo.image)
+    RestaurantInfoCardImage(painter = painterResource(id = restaurantInfo.image))
 }
 
 @Composable
@@ -105,7 +104,7 @@ fun RestaurantInfoCardPreview() {
     val restaurantInfo = RestaurantInfo(
         "Restaurant Name",
         "Restaurant Description",
-        painterResource(id = R.drawable.example_restaurant_image)
+        image = R.drawable.example_restaurant_image
     )
-    RestaurantInfoCard(restaurantInfo, PaddingValues(8.dp))
+    RestaurantInfoCard(restaurantInfo)
 }

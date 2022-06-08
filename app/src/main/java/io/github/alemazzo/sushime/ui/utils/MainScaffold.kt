@@ -27,7 +27,7 @@ fun MainScaffold(content: Screen) {
                     navController = navController
                 )
             },
-            content = { content(navController, it) }
+            content = { content(navController, it, null) }
         )
     }
 }

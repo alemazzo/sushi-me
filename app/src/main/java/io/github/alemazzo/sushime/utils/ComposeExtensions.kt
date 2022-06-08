@@ -1,5 +1,6 @@
 package io.github.alemazzo.sushime.utils
 
+import android.app.ActivityOptions
 import android.os.Bundle
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
@@ -13,6 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.*
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import io.github.alemazzo.sushime.ui.navigation.NavBarItemInfo
 import io.github.alemazzo.sushime.ui.navigation.Route
 
@@ -31,8 +33,10 @@ fun NavHostController.navigate(
 ) {
     navigate(route.path, builder = {
         launchSingleTop = true
+        restoreState = true
         navOptionsBuilder()
     })
+
 }
 
 
@@ -53,7 +57,7 @@ fun RowScope.NavBarItemFromRoute(
         label = { Text(element.title) },
         icon = {
             Icon(
-                painter = painterResource(id = element.iconResourceId),
+                imageVector = element.imageVector,
                 contentDescription = element.title
             )
         }

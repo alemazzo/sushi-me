@@ -1,9 +1,12 @@
 package io.github.alemazzo.sushime.ui.navigation
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.navigation.NavType
 import io.github.alemazzo.sushime.R
 import io.github.alemazzo.sushime.ui.screens.infoget.InfoGetScreen
+import io.github.alemazzo.sushime.ui.screens.restaurants.RestaurantsScreen
 import io.github.alemazzo.sushime.ui.screens.splash.SplashScreen
 
 /**
@@ -66,11 +69,14 @@ sealed class Route(
     object Restaurants : Route(
         path = "restaurants",
         screen = { navController, padding, _ ->
-            {}
+            RestaurantsScreen(
+                navController,
+                padding
+            )
         },
         navBarItemInfo = NavBarItemInfo(
             title = "Restaurants",
-            iconResourceId = R.drawable.ic_launcher_background
+            imageVector = Icons.Filled.Restaurant
         )
     )
 
@@ -81,7 +87,7 @@ sealed class Route(
         },
         navBarItemInfo = NavBarItemInfo(
             title = "Join",
-            iconResourceId = R.drawable.ic_launcher_background
+            imageVector = Icons.Filled.QrCodeScanner
         )
     )
 
@@ -92,7 +98,7 @@ sealed class Route(
         },
         navBarItemInfo = NavBarItemInfo(
             title = "Settings",
-            iconResourceId = R.drawable.ic_launcher_background
+            imageVector = Icons.Filled.Settings
         )
     )
 
@@ -117,7 +123,7 @@ sealed class Route(
         },
         navBarItemInfo = NavBarItemInfo(
             title = "Menu",
-            iconResourceId = R.drawable.ic_launcher_background
+            imageVector = Icons.Filled.RestaurantMenu
         )
     )
 
@@ -128,7 +134,7 @@ sealed class Route(
         },
         navBarItemInfo = NavBarItemInfo(
             title = "Cart",
-            iconResourceId = R.drawable.ic_launcher_background
+            imageVector = Icons.Filled.ShoppingCart
         )
     )
 

@@ -21,6 +21,6 @@ class InfoGetViewModel(application: Application) :
                 Toast.LENGTH_LONG
             ).show()
         }
-        delay(4000)
+        delay(1000)
     }
 }

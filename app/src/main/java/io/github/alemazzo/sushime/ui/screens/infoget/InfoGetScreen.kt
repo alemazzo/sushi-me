@@ -19,6 +19,7 @@ import io.github.alemazzo.sushime.ui.navigation.Route
 import io.github.alemazzo.sushime.ui.screens.infoget.viewmodel.InfoGetViewModel
 import io.github.alemazzo.sushime.ui.screens.login.components.RoundedTextField
 import io.github.alemazzo.sushime.ui.utils.MainScaffold
+import io.github.alemazzo.sushime.utils.getViewModel
 import io.github.alemazzo.sushime.utils.navigate
 import io.github.alemazzo.sushime.utils.withIOContext
 import io.github.alemazzo.sushime.utils.withMainContext
@@ -29,8 +30,7 @@ fun InfoGetScreen(
     navController: NavHostController,
     padding: PaddingValues,
 ) {
-    val infoGetViewModel: InfoGetViewModel = viewModel()
-    InfoGetScreenContent(navController, padding, infoGetViewModel)
+    InfoGetScreenContent(navController, padding)
 }
 
 @ExperimentalMaterial3Api
@@ -38,7 +38,7 @@ fun InfoGetScreen(
 fun InfoGetScreenContent(
     navController: NavHostController,
     padding: PaddingValues,
-    infoGetViewModel: InfoGetViewModel,
+    infoGetViewModel: InfoGetViewModel = getViewModel(),
 ) {
     val uiState = infoGetViewModel.uiState
     var email by uiState.email
@@ -84,7 +84,7 @@ fun InfoGetScreenContent(
 @Preview
 @Composable
 fun InfoGetScreenPreview() {
-    MainScaffold { navController, padding ->
+    MainScaffold { navController, padding, _ ->
         InfoGetScreen(navController, padding)
     }
 }

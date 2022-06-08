@@ -11,6 +11,7 @@ import io.github.alemazzo.sushime.ui.screens.splash.components.LoadDataAndChange
 import io.github.alemazzo.sushime.ui.screens.splash.components.SplashScreenContent
 import io.github.alemazzo.sushime.ui.screens.splash.viewmodel.SplashViewModel
 import io.github.alemazzo.sushime.ui.utils.MainScaffold
+import io.github.alemazzo.sushime.utils.getViewModel
 
 @ExperimentalMaterial3Api
 @Composable
@@ -18,7 +19,7 @@ fun SplashScreen(
     navController: NavHostController,
     padding: PaddingValues
 ) {
-    val splashViewModel: SplashViewModel = viewModel()
+    val splashViewModel: SplashViewModel = getViewModel()
     LoadDataAndChangeScreenAtTheEnd(splashViewModel, navController)
     SplashScreenContent(padding)
 }
@@ -32,7 +33,7 @@ fun SplashScreen(
 )
 @Composable
 fun SplashScreenPreview() {
-    MainScaffold { navController, padding ->
+    MainScaffold { navController, padding, _ ->
         SplashScreen(navController, padding)
     }
 }
