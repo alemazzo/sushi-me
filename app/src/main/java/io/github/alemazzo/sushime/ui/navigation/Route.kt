@@ -6,6 +6,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.navigation.NavType
 import io.github.alemazzo.sushime.R
 import io.github.alemazzo.sushime.ui.screens.infoget.InfoGetScreen
+import io.github.alemazzo.sushime.ui.screens.join.JoinScreen
 import io.github.alemazzo.sushime.ui.screens.restaurants.RestaurantsScreen
 import io.github.alemazzo.sushime.ui.screens.splash.SplashScreen
 
@@ -83,7 +84,7 @@ sealed class Route(
     object Join : Route(
         path = "join",
         screen = { navController, padding, _ ->
-            {}
+            JoinScreen(navController, padding)
         },
         navBarItemInfo = NavBarItemInfo(
             title = "Join",

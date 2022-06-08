@@ -3,6 +3,7 @@ package io.github.alemazzo.sushime.ui.utils
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import io.github.alemazzo.sushime.ui.navigation.BottomNavBar
 import io.github.alemazzo.sushime.ui.navigation.Screen
