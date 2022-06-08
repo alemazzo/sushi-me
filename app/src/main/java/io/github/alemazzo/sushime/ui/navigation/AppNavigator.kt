@@ -18,8 +18,6 @@ import io.github.alemazzo.sushime.utils.addRoute
 @Composable
 fun AppNavigator(navController: NavHostController, padding: PaddingValues) {
     NavHost(navController = navController, startDestination = Route.StartingRoute.path) {
-        Route.all().forEach {
-            addRoute(route = it, destination = { it.screen(navController, padding) })
-        }
+        Route.all().forEach { addRoute(it, navController, padding) }
     }
 }

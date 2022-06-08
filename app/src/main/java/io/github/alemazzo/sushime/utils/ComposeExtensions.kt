@@ -1,5 +1,7 @@
 package io.github.alemazzo.sushime.utils
 
+import android.os.Bundle
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -8,18 +10,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.painterResource
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
-import androidx.navigation.NavOptionsBuilder
-import androidx.navigation.PopUpToBuilder
+import androidx.navigation.*
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import io.github.alemazzo.sushime.ui.navigation.NavBarItemInfo
 import io.github.alemazzo.sushime.ui.navigation.Route
 
 @ExperimentalMaterial3Api
-fun NavGraphBuilder.addRoute(route: Route, destination: @Composable () -> Unit) {
-    composable(route.path) { destination() }
+fun NavGraphBuilder.addRoute(route: Route, navController: NavHostController, paddingValues: PaddingValues) {
+    composable(
+        route = route.path,
+        arguments = route.arguments.map { navArgument(it.first) { type = it.second } }
+    ) { route.screen(navController, paddingValues, it.arguments) }
 }
 
 @ExperimentalMaterial3Api
@@ -27,7 +29,10 @@ fun NavHostController.navigate(
     route: Route,
     navOptionsBuilder: NavOptionsBuilder.() -> Unit = { }
 ) {
-    navigate(route.path, builder = navOptionsBuilder)
+    navigate(route.path, builder = {
+        launchSingleTop = true
+        navOptionsBuilder()
+    })
 }
 
 

@@ -1,6 +1,7 @@
 package io.github.alemazzo.sushime.ui.navigation
 
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.navigation.NavType
 import io.github.alemazzo.sushime.R
 import io.github.alemazzo.sushime.ui.screens.infoget.InfoGetScreen
 import io.github.alemazzo.sushime.ui.screens.splash.SplashScreen
@@ -16,6 +17,8 @@ sealed class Route(
 
     /** the Screen to be associated */
     val screen: Screen,
+
+    val arguments: List<Pair<String, NavType<*>>> = listOf(),
 
     /** the information about his representation in the navbar,
     only if it's a route that should appear in a navbar. */
@@ -45,7 +48,7 @@ sealed class Route(
      */
     object Splash : Route(
         path = "splash",
-        screen = { navController, padding -> SplashScreen(navController, padding) },
+        screen = { navController, padding, _ -> SplashScreen(navController, padding) },
     )
 
     /**
@@ -53,7 +56,7 @@ sealed class Route(
      *
      * Only displayed at the first start-up of the App.
      */
-    object InfoGet : Route(path = "info-get", screen = { navController, padding ->
+    object InfoGet : Route(path = "info-get", screen = { navController, padding, _ ->
         InfoGetScreen(
             navController,
             padding
@@ -62,7 +65,7 @@ sealed class Route(
 
     object Restaurants : Route(
         path = "restaurants",
-        screen = { navController, padding ->
+        screen = { navController, padding, _ ->
             {}
         },
         navBarItemInfo = NavBarItemInfo(
@@ -73,7 +76,7 @@ sealed class Route(
 
     object Join : Route(
         path = "join",
-        screen = { navController, padding ->
+        screen = { navController, padding, _ ->
             {}
         },
         navBarItemInfo = NavBarItemInfo(
@@ -84,7 +87,7 @@ sealed class Route(
 
     object Settings : Route(
         path = "settings",
-        screen = { navController, padding ->
+        screen = { navController, padding, _ ->
             {}
         },
         navBarItemInfo = NavBarItemInfo(
@@ -95,21 +98,21 @@ sealed class Route(
 
     object RestaurantInfo : Route(
         path = "restaurant-info",
-        screen = { navController, padding ->
+        screen = { navController, padding, _ ->
             {}
         }
     )
 
     object CreateTable : Route(
         path = "create-table",
-        screen = { navController, padding ->
+        screen = { navController, padding, _ ->
             {}
         }
     )
 
     object OrderMenu : Route(
         path = "order-menu",
-        screen = { navController, padding ->
+        screen = { navController, padding, _ ->
             {}
         },
         navBarItemInfo = NavBarItemInfo(
@@ -120,7 +123,7 @@ sealed class Route(
 
     object OrderCart : Route(
         path = "order-cart",
-        screen = { navController, padding ->
+        screen = { navController, padding, _ ->
             {}
         },
         navBarItemInfo = NavBarItemInfo(
@@ -131,7 +134,7 @@ sealed class Route(
 
     object Item : Route(
         path = "item",
-        screen = { navController, padding ->
+        screen = { navController, padding, _ ->
             {}
         }
     )
