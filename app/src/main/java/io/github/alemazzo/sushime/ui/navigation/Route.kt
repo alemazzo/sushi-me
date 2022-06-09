@@ -3,12 +3,19 @@ package io.github.alemazzo.sushime.ui.navigation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavType
-import io.github.alemazzo.sushime.R
 import io.github.alemazzo.sushime.ui.screens.infoget.InfoGetScreen
 import io.github.alemazzo.sushime.ui.screens.join.JoinScreen
 import io.github.alemazzo.sushime.ui.screens.restaurants.RestaurantsScreen
+import io.github.alemazzo.sushime.ui.screens.restaurants.viewmodel.RestaurantsScreenViewModel
+import io.github.alemazzo.sushime.ui.screens.settings.SettingsScreen
 import io.github.alemazzo.sushime.ui.screens.splash.SplashScreen
+import io.github.alemazzo.sushime.utils.AndroidViewModelWithFabButton
+import io.github.alemazzo.sushime.utils.getViewModel
 
 /**
  * The routes of the application.
@@ -26,7 +33,11 @@ sealed class Route(
 
     /** the information about his representation in the navbar,
     only if it's a route that should appear in a navbar. */
-    val navBarItemInfo: NavBarItemInfo? = null
+    val navBarItemInfo: NavBarItemInfo? = null,
+
+    val floatingActionButtonInfo: FloatingActionButtonInfo? = null,
+
+    val getViewModel: (@Composable () -> AndroidViewModelWithFabButton)? = null,
 
 ) {
 
@@ -78,7 +89,13 @@ sealed class Route(
         navBarItemInfo = NavBarItemInfo(
             title = "Restaurants",
             imageVector = Icons.Filled.Restaurant
-        )
+        ),
+        floatingActionButtonInfo = FloatingActionButtonInfo(
+            defaultIconVector = Icons.Filled.QrCodeScanner
+        ),
+        getViewModel = {
+            getViewModel<RestaurantsScreenViewModel>() as AndroidViewModelWithFabButton
+        }
     )
 
     object Join : Route(
@@ -95,7 +112,7 @@ sealed class Route(
     object Settings : Route(
         path = "settings",
         screen = { navController, padding, _ ->
-            {}
+            SettingsScreen(navController, padding)
         },
         navBarItemInfo = NavBarItemInfo(
             title = "Settings",
@@ -146,3 +163,7 @@ sealed class Route(
         }
     )
 }
+
+data class FloatingActionButtonInfo(
+    val defaultIconVector: ImageVector
+)
