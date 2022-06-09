@@ -12,8 +12,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import io.github.alemazzo.sushime.ui.utils.MainScaffold
-import io.github.alemazzo.sushime.ui.utils.qr.QRScanner
+import io.github.alemazzo.sushime.ui.paging.App
+import io.github.alemazzo.sushime.utils.qr.QRScanner
 
 
 @Composable
@@ -47,7 +47,7 @@ fun JoinScreen(
 @Composable
 @androidx.compose.ui.tooling.preview.Preview
 fun JoinScreenPreview() {
-    MainScaffold { nc, pd, _ ->
+    App { nc, pd, _ ->
         JoinScreen(nc, pd)
     }
 }

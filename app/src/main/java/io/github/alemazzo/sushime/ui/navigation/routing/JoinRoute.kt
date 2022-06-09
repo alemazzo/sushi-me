@@ -4,7 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.navigation.NavHostController
-import io.github.alemazzo.sushime.ui.navigation.NavBarItemInfo
+import io.github.alemazzo.sushime.ui.navigation.navbar.NavBarItemInfo
 import io.github.alemazzo.sushime.ui.screens.join.JoinScreen
 
 

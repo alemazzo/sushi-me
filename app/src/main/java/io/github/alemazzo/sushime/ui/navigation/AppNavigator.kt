@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import io.github.alemazzo.sushime.ui.navigation.routing.Route
-import io.github.alemazzo.sushime.utils.addRoute
+import io.github.alemazzo.sushime.ui.navigation.utilities.addRoute
 
 /**
  * The main navigator of the App.
@@ -17,8 +17,8 @@ import io.github.alemazzo.sushime.utils.addRoute
  */
 @ExperimentalMaterial3Api
 @Composable
-fun AppNavigator(navController: NavHostController, padding: PaddingValues) {
-    NavHost(navController = navController, startDestination = Route.StartingRoute.path) {
+fun AppNavigator(navController: NavHostController, padding: PaddingValues, startingRoute: Route) {
+    NavHost(navController = navController, startDestination = startingRoute.path) {
         Route.all().forEach { addRoute(it, navController, padding) }
     }
 }

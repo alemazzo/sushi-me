@@ -23,17 +23,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.navigation.NavHostController
 import io.github.alemazzo.sushime.ui.navigation.routing.RestaurantInfoRoute
+import io.github.alemazzo.sushime.ui.paging.App
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.RestaurantInfoCard
 import io.github.alemazzo.sushime.ui.screens.restaurants.viewmodel.RestaurantsScreenViewModel
-import io.github.alemazzo.sushime.ui.utils.MainScaffold
-import io.github.alemazzo.sushime.ui.utils.qr.QRScanner
 import io.github.alemazzo.sushime.utils.getViewModel
+import io.github.alemazzo.sushime.utils.qr.QRScanner
 
 @ExperimentalMaterial3Api
 @Composable
 fun RestaurantsScreen(
     navController: NavHostController,
-    padding: PaddingValues
+    padding: PaddingValues,
 ) {
     RestaurantsScreenContent(navController, padding)
 }
@@ -43,7 +43,7 @@ fun RestaurantsScreen(
 @Composable
 fun RestaurantsScreenContent(
     navController: NavHostController,
-    padding: PaddingValues
+    padding: PaddingValues,
 ) {
     val restaurantsScreenViewModel: RestaurantsScreenViewModel = getViewModel()
     val context = LocalContext.current
@@ -64,13 +64,18 @@ fun RestaurantsScreenContent(
         Toast.makeText(context, it, Toast.LENGTH_LONG).show()
     }
 
-     RestaurantList(navController, restaurantsScreenViewModel, padding, isQRScannerVisible.not())
+    RestaurantList(navController, restaurantsScreenViewModel, padding, isQRScannerVisible.not())
 
 }
 
 @ExperimentalMaterial3Api
 @Composable
-fun RestaurantList(navController: NavHostController, restaurantsScreenViewModel: RestaurantsScreenViewModel, padding: PaddingValues, enabled: Boolean) {
+fun RestaurantList(
+    navController: NavHostController,
+    restaurantsScreenViewModel: RestaurantsScreenViewModel,
+    padding: PaddingValues,
+    enabled: Boolean,
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -128,13 +133,15 @@ fun ShowQRScannerWhenFabPressed(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
-                Text(text = "Scan Restaurant's QR", style = MaterialTheme.typography.titleLarge, color = Color.Black)
+                Text(text = "Scan Restaurant's QR",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Color.Black)
                 QRScanner(onTextChange = {
-                     if (it != "") {
-                         onResult(it)
-                         onEnd()
-                         showPopup = false
-                     }
+                    if (it != "") {
+                        onResult(it)
+                        onEnd()
+                        showPopup = false
+                    }
                 }, width = 300.dp, height = 300.dp)
             }
         }
@@ -145,7 +152,7 @@ fun ShowQRScannerWhenFabPressed(
 fun BackPressHandler(
     backPressedDispatcher: OnBackPressedDispatcher? =
         LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher,
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
 ) {
     val currentOnBackPressed by rememberUpdatedState(newValue = onBackPressed)
 
@@ -170,7 +177,7 @@ fun BackPressHandler(
 @Preview
 @Composable
 fun RestaurantsScreenPreview() {
-    MainScaffold { navController, padding, _ ->
+    App { navController, padding, _ ->
         RestaurantsScreen(navController, padding)
     }
 }

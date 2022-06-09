@@ -15,15 +15,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import io.github.alemazzo.sushime.ui.navigation.routing.RestaurantsRoute
-import io.github.alemazzo.sushime.ui.screens.infoget.viewmodel.InfoGetViewModel
+import io.github.alemazzo.sushime.ui.paging.App
 import io.github.alemazzo.sushime.ui.screens.infoget.components.RoundedTextField
-import io.github.alemazzo.sushime.ui.utils.MainScaffold
+import io.github.alemazzo.sushime.ui.screens.infoget.viewmodel.InfoGetViewModel
 import io.github.alemazzo.sushime.utils.getViewModel
 import io.github.alemazzo.sushime.utils.launchWithIOContext
-import io.github.alemazzo.sushime.utils.launchWithMainContext
 import io.github.alemazzo.sushime.utils.withMainContext
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 @ExperimentalMaterial3Api
 @Composable
@@ -85,7 +82,7 @@ fun InfoGetScreenContent(
 @Preview
 @Composable
 fun InfoGetScreenPreview() {
-    MainScaffold { navController, padding, _ ->
+    App { navController, padding, _ ->
         InfoGetScreen(navController, padding)
     }
 }

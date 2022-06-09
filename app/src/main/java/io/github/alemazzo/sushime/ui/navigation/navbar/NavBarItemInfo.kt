@@ -1,4 +1,4 @@
-package io.github.alemazzo.sushime.ui.navigation
+package io.github.alemazzo.sushime.ui.navigation.navbar
 
 import androidx.compose.ui.graphics.vector.ImageVector
 
@@ -11,5 +11,5 @@ data class NavBarItemInfo(
     val title: String,
 
     /** The id of the resource of the icon to be displayed in the navbar */
-    val imageVector: ImageVector
+    val imageVector: ImageVector,
 )

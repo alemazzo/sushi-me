@@ -3,6 +3,7 @@ package io.github.alemazzo.sushime.utils
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 
+
 open class AndroidViewModelWithFabButton(application: Application) : AndroidViewModel(application) {
     var onFabPress: () -> Unit = {}
 }

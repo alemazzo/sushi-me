@@ -5,10 +5,9 @@ import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.navigation.NavHostController
-import io.github.alemazzo.sushime.ui.navigation.NavBarItemInfo
+import io.github.alemazzo.sushime.ui.navigation.navbar.NavBarItemInfo
 import io.github.alemazzo.sushime.ui.screens.restaurants.RestaurantsScreen
 import io.github.alemazzo.sushime.ui.screens.restaurants.viewmodel.RestaurantsScreenViewModel
-import io.github.alemazzo.sushime.utils.AndroidViewModelWithFabButton
 import io.github.alemazzo.sushime.utils.getViewModel
 
 
@@ -29,7 +28,7 @@ object RestaurantsRoute : Route(
         defaultIconVector = Icons.Filled.QrCodeScanner
     ),
     getViewModel = {
-        getViewModel<RestaurantsScreenViewModel>() as AndroidViewModelWithFabButton
+        getViewModel<RestaurantsScreenViewModel>()
     }
 ) {
     fun navigate(navController: NavHostController) {

@@ -5,15 +5,19 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import io.github.alemazzo.sushime.ui.screens.restaurant_info.RestaurantInfoScreen
 
+const val argumentName = "restaurantName"
+
 @ExperimentalMaterial3Api
 object RestaurantInfoRoute : Route(
-    path = "restaurant-info/{restaurantName}",
-    arguments = listOf(Pair("restaurantName", NavType.StringType)),
+    path = "restaurant-info/{$argumentName}",
+    arguments = mapOf(
+        argumentName to NavType.StringType
+    ),
     screen = { navController, padding, args ->
-        RestaurantInfoScreen(navController, padding, args!!.getString("restaurantName")!!)
+        RestaurantInfoScreen(navController, padding, args!!.getString(argumentName)!!)
     }
 ) {
     fun navigate(navController: NavHostController, restaurantName: String) {
-        navController.navigate(this.path.replace("{restaurantName}", restaurantName))
+        navController.navigate(this.path.replace("{$argumentName}", restaurantName))
     }
 }

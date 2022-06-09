@@ -1,4 +1,4 @@
-package io.github.alemazzo.sushime.ui.navigation
+package io.github.alemazzo.sushime.ui.navigation.navbar
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import io.github.alemazzo.sushime.ui.navigation.routing.*
@@ -13,8 +13,8 @@ sealed class Navbar(
     /**
      * The ordered sequence of Route of the Navbar.
      */
-    val routes: List<Route>
-    ) {
+    val routes: List<Route>,
+) {
 
     companion object {
 

@@ -1,13 +1,12 @@
-package io.github.alemazzo.sushime.ui.utils
+package io.github.alemazzo.sushime.ui.paging
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.NavigationBar
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import io.github.alemazzo.sushime.ui.navigation.Navbar
+import io.github.alemazzo.sushime.ui.navigation.navbar.Navbar
 import io.github.alemazzo.sushime.ui.navigation.routing.Route
-import io.github.alemazzo.sushime.utils.NavBarItemFromRoute
-import io.github.alemazzo.sushime.utils.Navigate
+import io.github.alemazzo.sushime.ui.navigation.utilities.navigate
 
 /**
  * Automatic detected navbar from currentRoute.
@@ -19,17 +18,17 @@ import io.github.alemazzo.sushime.utils.Navigate
  */
 @ExperimentalMaterial3Api
 @Composable
-fun BottomNavBar(currentRoute: Route?, navController: NavHostController) {
+fun BottomBar(currentRoute: Route?, navController: NavHostController) {
     if (currentRoute == null) return
     Navbar.all()
         .firstOrNull { it.routes.contains(currentRoute) }
         ?.apply {
             NavigationBar {
                 routes.forEach {
-                    NavBarItemFromRoute(
+                    BottomBarItemFromRoute(
                         element = it.navBarItemInfo!!,
                         isSelected = it == currentRoute,
-                        onClick = { navController.Navigate(it) }
+                        onClick = { navController.navigate(it) }
                     )
                 }
             }

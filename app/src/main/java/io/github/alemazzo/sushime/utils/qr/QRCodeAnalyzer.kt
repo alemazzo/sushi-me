@@ -1,4 +1,4 @@
-package io.github.alemazzo.sushime.ui.utils.qr
+package io.github.alemazzo.sushime.utils.qr
 
 
 import android.graphics.ImageFormat
@@ -9,11 +9,12 @@ import com.google.zxing.common.HybridBinarizer
 import java.nio.ByteBuffer
 
 class QRCodeAnalyzer(
-    private val onQrCodeScanned: (result: String?) -> Unit
+    private val onQrCodeScanned: (result: String?) -> Unit,
 ) : ImageAnalysis.Analyzer {
 
     companion object {
-        private val SUPPORTED_IMAGE_FORMATS = listOf(ImageFormat.YUV_420_888, ImageFormat.YUV_422_888, ImageFormat.YUV_444_888)
+        private val SUPPORTED_IMAGE_FORMATS =
+            listOf(ImageFormat.YUV_420_888, ImageFormat.YUV_422_888, ImageFormat.YUV_444_888)
     }
 
     override fun analyze(image: ImageProxy) {

@@ -12,7 +12,7 @@ import io.github.alemazzo.sushime.ui.screens.splash.viewmodel.SplashViewModel
 @Composable
 fun LoadDataAndChangeScreenAtTheEnd(
     splashViewModel: SplashViewModel,
-    navController: NavHostController
+    navController: NavHostController,
 ) {
     LaunchedEffect(true) {
         splashViewModel.load()
