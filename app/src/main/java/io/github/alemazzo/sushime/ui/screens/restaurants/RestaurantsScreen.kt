@@ -5,8 +5,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,14 +22,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.navigation.NavHostController
-import io.github.alemazzo.sushime.ui.navigation.Route
-import io.github.alemazzo.sushime.ui.screens.restaurants.components.RestaurantInfo
+import io.github.alemazzo.sushime.ui.navigation.routing.RestaurantInfoRoute
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.RestaurantInfoCard
 import io.github.alemazzo.sushime.ui.screens.restaurants.viewmodel.RestaurantsScreenViewModel
 import io.github.alemazzo.sushime.ui.utils.MainScaffold
 import io.github.alemazzo.sushime.ui.utils.qr.QRScanner
 import io.github.alemazzo.sushime.utils.getViewModel
-import io.github.alemazzo.sushime.utils.navigate
+
 @ExperimentalMaterial3Api
 @Composable
 fun RestaurantsScreen(
@@ -89,12 +86,9 @@ fun RestaurantList(navController: NavHostController, restaurantsScreenViewModel:
     ) {
         items(restaurantsScreenViewModel.items, itemContent = {
             RestaurantInfoCard(restaurantInfo = it, enabled = enabled) {
-                val argName = Route.RestaurantInfo.arguments[0].first
-                navController.navigate(
-                    Route.RestaurantInfo,
-                    mapOf(
-                        argName to it.name
-                    )
+                RestaurantInfoRoute.navigate(
+                    navController = navController,
+                    restaurantName = it.name
                 )
             }
         })

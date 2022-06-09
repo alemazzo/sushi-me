@@ -1,4 +1,4 @@
-package io.github.alemazzo.sushime.ui.screens.login.components
+package io.github.alemazzo.sushime.ui.screens.infoget.components
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text

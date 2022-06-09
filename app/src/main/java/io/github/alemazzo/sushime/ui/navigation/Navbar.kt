@@ -1,6 +1,7 @@
 package io.github.alemazzo.sushime.ui.navigation
 
 import androidx.compose.material3.ExperimentalMaterial3Api
+import io.github.alemazzo.sushime.ui.navigation.routing.*
 
 /**
  * All possible navbars in the application:
@@ -30,9 +31,9 @@ sealed class Navbar(
      */
     object Navigate : Navbar(
         listOf(
-            Route.Restaurants,
-            Route.Join,
-            Route.Settings
+            RestaurantsRoute,
+            JoinRoute,
+            SettingsRoute
         )
     )
 
@@ -41,8 +42,8 @@ sealed class Navbar(
      */
     object Order : Navbar(
         listOf(
-            Route.OrderMenu,
-            Route.OrderCart
+            OrderMenuRoute,
+            OrderCartRoute
         )
     )
 }

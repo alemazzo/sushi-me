@@ -3,9 +3,8 @@ package io.github.alemazzo.sushime.ui.utils
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.navigation.compose.rememberNavController
-import io.github.alemazzo.sushime.ui.navigation.BottomNavBar
-import io.github.alemazzo.sushime.ui.navigation.Route
 import io.github.alemazzo.sushime.ui.navigation.Screen
+import io.github.alemazzo.sushime.ui.navigation.routing.Route
 import io.github.alemazzo.sushime.ui.theme.SashimeTheme
 import io.github.alemazzo.sushime.utils.rememberCurrentRoute
 

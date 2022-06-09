@@ -1,4 +1,4 @@
-package io.github.alemazzo.sushime.ui.screens.login.state
+package io.github.alemazzo.sushime.ui.screens.infoget.state
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf

@@ -13,16 +13,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import io.github.alemazzo.sushime.ui.navigation.Route
+import io.github.alemazzo.sushime.ui.navigation.routing.RestaurantsRoute
 import io.github.alemazzo.sushime.ui.screens.infoget.viewmodel.InfoGetViewModel
-import io.github.alemazzo.sushime.ui.screens.login.components.RoundedTextField
+import io.github.alemazzo.sushime.ui.screens.infoget.components.RoundedTextField
 import io.github.alemazzo.sushime.ui.utils.MainScaffold
 import io.github.alemazzo.sushime.utils.getViewModel
-import io.github.alemazzo.sushime.utils.navigate
-import io.github.alemazzo.sushime.utils.withIOContext
-import io.github.alemazzo.sushime.utils.withMainContext
+import io.github.alemazzo.sushime.utils.launchWithIOContext
+import io.github.alemazzo.sushime.utils.launchWithMainContext
 
 @ExperimentalMaterial3Api
 @Composable
@@ -66,11 +64,11 @@ fun InfoGetScreenContent(
             value = surname,
             onChange = { surname = it })
         Button(onClick = {
-            withIOContext {
+            launchWithIOContext {
                 infoGetViewModel.registerInfo()
-                withMainContext {
+                launchWithMainContext {
                     navController.backQueue.clear()
-                    navController.navigate(Route.Restaurants)
+                    RestaurantsRoute.navigate(navController)
                 }
             }
         }, shape = RoundedCornerShape(16.dp)) {

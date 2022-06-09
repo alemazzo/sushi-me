@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 /**
  * Execute a coroutine with the specified Context.
  */
-fun withCoroutine(dispatcher: CoroutineDispatcher, function: suspend CoroutineScope.() -> Unit) {
+fun launchWithCoroutineContext(dispatcher: CoroutineDispatcher, function: suspend CoroutineScope.() -> Unit) {
     CoroutineScope(dispatcher).launch {
         function()
     }
@@ -17,20 +17,20 @@ fun withCoroutine(dispatcher: CoroutineDispatcher, function: suspend CoroutineSc
 /**
  * Execute a coroutine with the IO Context.
  */
-fun withIOContext(function: suspend CoroutineScope.() -> Unit) {
-    withCoroutine(Dispatchers.IO, function)
+fun launchWithIOContext(function: suspend CoroutineScope.() -> Unit) {
+    launchWithCoroutineContext(Dispatchers.IO, function)
 }
 
 /**
  * Execute a coroutine with the Main Context.
  */
-fun withMainContext(function: suspend CoroutineScope.() -> Unit) {
-    withCoroutine(Dispatchers.Main, function)
+fun launchWithMainContext(function: suspend CoroutineScope.() -> Unit) {
+    launchWithCoroutineContext(Dispatchers.Main, function)
 }
 
 /**
  * Execute a coroutine with the Defaul Context.
  */
-fun withDefaultContext(function: suspend CoroutineScope.() -> Unit) {
-    withCoroutine(Dispatchers.Default, function)
+fun launchWithDefaultContext(function: suspend CoroutineScope.() -> Unit) {
+    launchWithCoroutineContext(Dispatchers.Default, function)
 }

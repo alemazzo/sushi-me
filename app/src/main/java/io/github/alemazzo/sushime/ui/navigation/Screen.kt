@@ -10,4 +10,8 @@ import androidx.navigation.NavHostController
  * Each screen must accept a navigation controller and
  * the padding values in order to not hide the bottom-bar.
  */
-typealias Screen = @Composable (navController: NavHostController, padding: PaddingValues, arguments: Bundle?) -> Unit
+typealias Screen = @Composable (
+    navController: NavHostController,
+    padding: PaddingValues,
+    arguments: Bundle?
+) -> Unit

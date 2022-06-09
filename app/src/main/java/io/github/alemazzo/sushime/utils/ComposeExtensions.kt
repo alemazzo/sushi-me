@@ -13,7 +13,7 @@ import androidx.navigation.*
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import io.github.alemazzo.sushime.ui.navigation.NavBarItemInfo
-import io.github.alemazzo.sushime.ui.navigation.Route
+import io.github.alemazzo.sushime.ui.navigation.routing.Route
 
 @ExperimentalMaterial3Api
 fun NavGraphBuilder.addRoute(route: Route, navController: NavHostController, paddingValues: PaddingValues) {
@@ -24,7 +24,7 @@ fun NavGraphBuilder.addRoute(route: Route, navController: NavHostController, pad
 }
 
 @ExperimentalMaterial3Api
-fun NavHostController.navigate(
+fun NavHostController.Navigate(
     route: Route,
     navOptionsBuilder: NavOptionsBuilder.() -> Unit = { }
 ) {
@@ -35,7 +35,7 @@ fun NavHostController.navigate(
     })
 }
 @ExperimentalMaterial3Api
-fun NavHostController.navigate(
+fun NavHostController.Navigate(
     route: Route,
     arguments: Map<String, String>,
     navOptionsBuilder: NavOptionsBuilder.() -> Unit = { }
