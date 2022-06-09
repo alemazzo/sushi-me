@@ -2,18 +2,11 @@ package io.github.alemazzo.sushime.ui.screens.splash.viewmodel
 
 import android.app.Application
 import android.util.Log
-import io.github.alemazzo.sushime.ui.utils.UiState
-import io.github.alemazzo.sushime.utils.ViewModelWithUIState
+import androidx.lifecycle.AndroidViewModel
 import kotlinx.coroutines.delay
-import kotlinx.parcelize.Parcelize
-
-@Parcelize
-class SplashScreenUIState : UiState()
 
 class SplashViewModel(application: Application) :
-    ViewModelWithUIState<SplashScreenUIState>(application) {
-
-    override val uiState: SplashScreenUIState = SplashScreenUIState()
+    AndroidViewModel(application) {
 
     suspend fun load() {
         Log.d("SplashViewModel", "start loading")

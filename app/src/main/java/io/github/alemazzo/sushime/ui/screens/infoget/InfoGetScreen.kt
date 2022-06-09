@@ -21,6 +21,9 @@ import io.github.alemazzo.sushime.ui.utils.MainScaffold
 import io.github.alemazzo.sushime.utils.getViewModel
 import io.github.alemazzo.sushime.utils.launchWithIOContext
 import io.github.alemazzo.sushime.utils.launchWithMainContext
+import io.github.alemazzo.sushime.utils.withMainContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @ExperimentalMaterial3Api
 @Composable
@@ -66,7 +69,7 @@ fun InfoGetScreenContent(
         Button(onClick = {
             launchWithIOContext {
                 infoGetViewModel.registerInfo()
-                launchWithMainContext {
+                withMainContext {
                     navController.backQueue.clear()
                     RestaurantsRoute.navigate(navController)
                 }

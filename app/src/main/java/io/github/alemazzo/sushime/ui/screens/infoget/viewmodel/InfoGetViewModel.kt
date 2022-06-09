@@ -3,12 +3,12 @@ package io.github.alemazzo.sushime.ui.screens.infoget.viewmodel
 import android.app.Application
 import android.widget.Toast
 import io.github.alemazzo.sushime.ui.screens.infoget.state.InfoGetScreenState
-import io.github.alemazzo.sushime.utils.ViewModelWithUIState
+import io.github.alemazzo.sushime.utils.AndroidViewModelWithUIState
 import io.github.alemazzo.sushime.utils.launchWithMainContext
 import kotlinx.coroutines.delay
 
 class InfoGetViewModel(application: Application) :
-    ViewModelWithUIState<InfoGetScreenState>(application) {
+    AndroidViewModelWithUIState<InfoGetScreenState>(application) {
     override val uiState: InfoGetScreenState = InfoGetScreenState()
 
     suspend fun registerInfo() {
