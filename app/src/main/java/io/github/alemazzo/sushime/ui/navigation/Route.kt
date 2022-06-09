@@ -4,10 +4,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavType
+import io.github.alemazzo.sushime.ui.screens.restaurant_info.RestaurantInfoScreen
 import io.github.alemazzo.sushime.ui.screens.infoget.InfoGetScreen
 import io.github.alemazzo.sushime.ui.screens.join.JoinScreen
 import io.github.alemazzo.sushime.ui.screens.restaurants.RestaurantsScreen
@@ -121,9 +120,10 @@ sealed class Route(
     )
 
     object RestaurantInfo : Route(
-        path = "restaurant-info",
-        screen = { navController, padding, _ ->
-            {}
+        path = "restaurant-info/{restaurantName}",
+        arguments = listOf(Pair("restaurantName", NavType.StringType)),
+        screen = { navController, padding, args ->
+            RestaurantInfoScreen(navController, padding, args!!.getString("restaurantName")!!)
         }
     )
 

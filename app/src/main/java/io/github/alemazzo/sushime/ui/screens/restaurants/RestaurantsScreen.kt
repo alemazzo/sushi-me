@@ -24,12 +24,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.navigation.NavHostController
+import io.github.alemazzo.sushime.ui.navigation.Route
+import io.github.alemazzo.sushime.ui.screens.restaurants.components.RestaurantInfo
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.RestaurantInfoCard
 import io.github.alemazzo.sushime.ui.screens.restaurants.viewmodel.RestaurantsScreenViewModel
 import io.github.alemazzo.sushime.ui.utils.MainScaffold
 import io.github.alemazzo.sushime.ui.utils.qr.QRScanner
 import io.github.alemazzo.sushime.utils.getViewModel
-
+import io.github.alemazzo.sushime.utils.navigate
 @ExperimentalMaterial3Api
 @Composable
 fun RestaurantsScreen(
@@ -65,12 +67,13 @@ fun RestaurantsScreenContent(
         Toast.makeText(context, it, Toast.LENGTH_LONG).show()
     }
 
-     RestaurantList(restaurantsScreenViewModel, padding, isQRScannerVisible.not())
+     RestaurantList(navController, restaurantsScreenViewModel, padding, isQRScannerVisible.not())
 
 }
 
+@ExperimentalMaterial3Api
 @Composable
-fun RestaurantList(restaurantsScreenViewModel: RestaurantsScreenViewModel, padding: PaddingValues, enabled: Boolean) {
+fun RestaurantList(navController: NavHostController, restaurantsScreenViewModel: RestaurantsScreenViewModel, padding: PaddingValues, enabled: Boolean) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -86,11 +89,18 @@ fun RestaurantList(restaurantsScreenViewModel: RestaurantsScreenViewModel, paddi
     ) {
         items(restaurantsScreenViewModel.items, itemContent = {
             RestaurantInfoCard(restaurantInfo = it, enabled = enabled) {
-
+                val argName = Route.RestaurantInfo.arguments[0].first
+                navController.navigate(
+                    Route.RestaurantInfo,
+                    mapOf(
+                        argName to it.name
+                    )
+                )
             }
         })
     }
 }
+
 
 @Composable
 fun ShowQRScannerWhenFabPressed(

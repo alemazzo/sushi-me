@@ -1,7 +1,5 @@
 package io.github.alemazzo.sushime.utils
 
-import android.app.ActivityOptions
-import android.os.Bundle
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -11,11 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.navigation.*
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import io.github.alemazzo.sushime.ui.navigation.NavBarItemInfo
 import io.github.alemazzo.sushime.ui.navigation.Route
 
@@ -37,9 +33,24 @@ fun NavHostController.navigate(
         restoreState = true
         navOptionsBuilder()
     })
-
 }
-
+@ExperimentalMaterial3Api
+fun NavHostController.navigate(
+    route: Route,
+    arguments: Map<String, String>,
+    navOptionsBuilder: NavOptionsBuilder.() -> Unit = { }
+) {
+    val args = route.arguments.map { it.first }
+    var path = route.path
+    args.forEach {
+        if(arguments.containsKey(it)) path = path.replace("{$it}", arguments[it]!!)
+    }
+    navigate(path, builder = {
+        launchSingleTop = true
+        restoreState = true
+        navOptionsBuilder()
+    })
+}
 
 @ExperimentalMaterial3Api
 fun NavOptionsBuilder.popUpTo(route: Route, function: PopUpToBuilder.() -> Unit = {}) {
