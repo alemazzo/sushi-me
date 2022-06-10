@@ -1,5 +1,6 @@
 package io.github.alemazzo.sushime.ui.screens.infoget
 
+import android.os.Bundle
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -14,8 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import io.github.alemazzo.sushime.ui.navigation.routing.RestaurantsRoute
-import io.github.alemazzo.sushime.ui.paging.App
+import io.github.alemazzo.sushime.Routes
+import io.github.alemazzo.sushime.ui.navigation.RoutePreview
+import io.github.alemazzo.sushime.ui.navigation.Screen
 import io.github.alemazzo.sushime.ui.screens.infoget.components.RoundedTextField
 import io.github.alemazzo.sushime.ui.screens.infoget.viewmodel.InfoGetViewModel
 import io.github.alemazzo.sushime.utils.getViewModel
@@ -23,12 +25,17 @@ import io.github.alemazzo.sushime.utils.launchWithIOContext
 import io.github.alemazzo.sushime.utils.withMainContext
 
 @ExperimentalMaterial3Api
-@Composable
-fun InfoGetScreen(
-    navController: NavHostController,
-    padding: PaddingValues,
-) {
-    InfoGetScreenContent(navController, padding)
+object InfoGetScreen : Screen() {
+
+    @Composable
+    override fun Content(
+        navigator: NavHostController,
+        paddingValues: PaddingValues,
+        arguments: Bundle?,
+    ) {
+        InfoGetScreenContent(navigator, paddingValues)
+    }
+
 }
 
 @ExperimentalMaterial3Api
@@ -68,7 +75,7 @@ fun InfoGetScreenContent(
                 infoGetViewModel.registerInfo()
                 withMainContext {
                     navController.backQueue.clear()
-                    RestaurantsRoute.navigate(navController)
+                    Routes.RestaurantsRoute.navigate(navController)
                 }
             }
         }, shape = RoundedCornerShape(16.dp)) {
@@ -78,11 +85,9 @@ fun InfoGetScreenContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@ExperimentalMaterial3Api
 @Preview
 @Composable
 fun InfoGetScreenPreview() {
-    App { navController, padding, _ ->
-        InfoGetScreen(navController, padding)
-    }
+    RoutePreview(route = Routes.InfoGetRoute)
 }

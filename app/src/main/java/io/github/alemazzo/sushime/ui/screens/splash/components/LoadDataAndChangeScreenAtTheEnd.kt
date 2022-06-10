@@ -4,8 +4,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavHostController
-import io.github.alemazzo.sushime.ui.navigation.routing.InfoGetRoute
-import io.github.alemazzo.sushime.ui.navigation.routing.RestaurantsRoute
+import io.github.alemazzo.sushime.Routes
 import io.github.alemazzo.sushime.ui.screens.splash.viewmodel.SplashViewModel
 
 @ExperimentalMaterial3Api
@@ -18,9 +17,9 @@ fun LoadDataAndChangeScreenAtTheEnd(
         splashViewModel.load()
         navController.backQueue.clear()
         if (splashViewModel.hasAlreadyBeenRegistered()) {
-            RestaurantsRoute.navigate(navController)
+            Routes.RestaurantsRoute.navigate(navController)
         } else {
-            InfoGetRoute.navigate(navController)
+            Routes.InfoGetRoute.navigate(navController)
         }
     }
 }

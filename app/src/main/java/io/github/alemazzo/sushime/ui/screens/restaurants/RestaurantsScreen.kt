@@ -1,5 +1,6 @@
 package io.github.alemazzo.sushime.ui.screens.restaurants
 
+import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher
@@ -9,7 +10,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -22,47 +26,71 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.navigation.NavHostController
-import io.github.alemazzo.sushime.ui.navigation.routing.RestaurantInfoRoute
-import io.github.alemazzo.sushime.ui.paging.App
+import io.github.alemazzo.sushime.BottomBars
+import io.github.alemazzo.sushime.Routes
+import io.github.alemazzo.sushime.ui.navigation.Route
+import io.github.alemazzo.sushime.ui.navigation.RoutePreview
+import io.github.alemazzo.sushime.ui.navigation.Screen
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.RestaurantInfoCard
 import io.github.alemazzo.sushime.ui.screens.restaurants.viewmodel.RestaurantsScreenViewModel
 import io.github.alemazzo.sushime.utils.getViewModel
 import io.github.alemazzo.sushime.utils.qr.QRScanner
 
 @ExperimentalMaterial3Api
-@Composable
-fun RestaurantsScreen(
-    navController: NavHostController,
-    padding: PaddingValues,
-) {
-    RestaurantsScreenContent(navController, padding)
-}
+object RestaurantsScreen : Screen() {
 
+    var isQRScannerVisible by mutableStateOf(false)
+
+    @Composable
+    override fun FloatingActionButton() {
+        androidx.compose.material3.FloatingActionButton(onClick = { isQRScannerVisible = true }) {
+            Icon(
+                imageVector = Icons.Filled.QrCodeScanner,
+                contentDescription = "Scan"
+            )
+        }
+    }
+
+    @Composable
+    override fun BottomBar(navigator: NavHostController, currentRoute: Route) {
+        BottomBars.NavigateBottomBar.Get(currentRoute, navigator)
+    }
+
+    @Composable
+    override fun Content(
+        navigator: NavHostController,
+        paddingValues: PaddingValues,
+        arguments: Bundle?,
+    ) {
+        RestaurantsScreenContent(
+            navigator,
+            paddingValues,
+            isQRScannerVisible
+        ) { isQRScannerVisible = it }
+    }
+
+}
 
 @ExperimentalMaterial3Api
 @Composable
 fun RestaurantsScreenContent(
     navController: NavHostController,
     padding: PaddingValues,
+    isQRScannerVisible: Boolean,
+    onQRScannerVisibilityChange: (Boolean) -> Unit,
 ) {
     val restaurantsScreenViewModel: RestaurantsScreenViewModel = getViewModel()
     val context = LocalContext.current
 
-    var isQRScannerVisible by remember {
-        mutableStateOf(false)
-    }
-
     ShowQRScannerWhenFabPressed(
-        viewModel = restaurantsScreenViewModel,
-        onStart = {
-            isQRScannerVisible = true
-        },
+        showPopup = isQRScannerVisible,
         onEnd = {
-            isQRScannerVisible = false
+            onQRScannerVisibilityChange(false)
+        },
+        onResult = {
+            Toast.makeText(context, it, Toast.LENGTH_LONG).show()
         }
-    ) {
-        Toast.makeText(context, it, Toast.LENGTH_LONG).show()
-    }
+    )
 
     RestaurantList(navController, restaurantsScreenViewModel, padding, isQRScannerVisible.not())
 
@@ -91,8 +119,8 @@ fun RestaurantList(
     ) {
         items(restaurantsScreenViewModel.items, itemContent = {
             RestaurantInfoCard(restaurantInfo = it, enabled = enabled) {
-                RestaurantInfoRoute.navigate(
-                    navController = navController,
+                Routes.RestaurantInfoRoute.navigate(
+                    navigator = navController,
                     restaurantName = it.name
                 )
             }
@@ -103,48 +131,43 @@ fun RestaurantList(
 
 @Composable
 fun ShowQRScannerWhenFabPressed(
-    viewModel: RestaurantsScreenViewModel,
-    onStart: () -> Unit,
+    showPopup: Boolean,
     onEnd: () -> Unit,
     onResult: (String) -> Unit,
 ) {
-    var showPopup by remember {
-        mutableStateOf(false)
-    }
-    viewModel.onFabPress = {
-        showPopup = true
-        onStart()
-    }
     if (showPopup) {
         BackPressHandler {
-            showPopup = false
             onEnd()
         }
-        Popup(
-            alignment = Alignment.Center,
-            onDismissRequest = { showPopup = false; onEnd() }
-        ) {
-            Column(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(16.dp))
-                    .width(350.dp)
-                    .height(400.dp)
-                    .background(MaterialTheme.colorScheme.primary),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceEvenly
+        Box(modifier = Modifier.fillMaxSize()) {
+            Popup(
+                alignment = Alignment.Center,
+                onDismissRequest = {
+                    onEnd()
+                }
             ) {
-                Text(text = "Scan Restaurant's QR",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = Color.Black)
-                QRScanner(onTextChange = {
-                    if (it != "") {
-                        onResult(it)
-                        onEnd()
-                        showPopup = false
-                    }
-                }, width = 300.dp, height = 300.dp)
+                Column(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(16.dp))
+                        .width(350.dp)
+                        .height(400.dp)
+                        .background(MaterialTheme.colorScheme.primary),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Text(text = "Scan Restaurant's QR",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = Color.Black)
+                    QRScanner(onTextChange = {
+                        if (it != "") {
+                            onResult(it)
+                            onEnd()
+                        }
+                    }, width = 300.dp, height = 300.dp)
+                }
             }
         }
+
     }
 }
 
@@ -177,7 +200,5 @@ fun BackPressHandler(
 @Preview
 @Composable
 fun RestaurantsScreenPreview() {
-    App { navController, padding, _ ->
-        RestaurantsScreen(navController, padding)
-    }
+    RoutePreview(route = Routes.RestaurantsRoute)
 }

@@ -1,5 +1,6 @@
 package io.github.alemazzo.sushime.ui.screens.join
 
+import android.os.Bundle
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -12,12 +13,35 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import io.github.alemazzo.sushime.ui.paging.App
+import io.github.alemazzo.sushime.BottomBars
+import io.github.alemazzo.sushime.Routes
+import io.github.alemazzo.sushime.ui.navigation.Route
+import io.github.alemazzo.sushime.ui.navigation.RoutePreview
+import io.github.alemazzo.sushime.ui.navigation.Screen
 import io.github.alemazzo.sushime.utils.qr.QRScanner
 
 
+@ExperimentalMaterial3Api
+object JoinScreen : Screen() {
+
+    @Composable
+    override fun BottomBar(navigator: NavHostController, currentRoute: Route) {
+        BottomBars.NavigateBottomBar.Get(currentRoute, navigator)
+    }
+
+    @Composable
+    override fun Content(
+        navigator: NavHostController,
+        paddingValues: PaddingValues,
+        arguments: Bundle?,
+    ) {
+        JoinScreenContent(navigator, paddingValues)
+    }
+
+}
+
 @Composable
-fun JoinScreen(
+fun JoinScreenContent(
     navController: NavHostController,
     paddingValues: PaddingValues,
 ) {
@@ -47,7 +71,5 @@ fun JoinScreen(
 @Composable
 @androidx.compose.ui.tooling.preview.Preview
 fun JoinScreenPreview() {
-    App { nc, pd, _ ->
-        JoinScreen(nc, pd)
-    }
+    RoutePreview(route = Routes.JoinRoute)
 }

@@ -5,13 +5,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import io.github.alemazzo.sushime.ui.navigation.routing.Route
+import io.github.alemazzo.sushime.ui.navigation.Route
 
 @ExperimentalMaterial3Api
 @Composable
-fun rememberCurrentRoute(navController: NavHostController): Route? {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = Route.all().firstOrNull {
+fun rememberCurrentRoute(routes: List<Route>, navigator: NavHostController): Route? {
+    val navBackStackEntry by navigator.currentBackStackEntryAsState()
+    val currentRoute = routes.firstOrNull {
         it.path == navBackStackEntry?.destination?.route
     }
     return currentRoute
