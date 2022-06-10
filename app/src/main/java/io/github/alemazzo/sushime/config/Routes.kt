@@ -1,8 +1,8 @@
-package io.github.alemazzo.sushime
+package io.github.alemazzo.sushime.config
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.navigation.NavHostController
-import io.github.alemazzo.sushime.ui.navigation.Route
+import io.github.alemazzo.sushime.navigation.routing.Route
 import io.github.alemazzo.sushime.ui.screens.infoget.InfoGetScreen
 import io.github.alemazzo.sushime.ui.screens.join.JoinScreen
 import io.github.alemazzo.sushime.ui.screens.restaurant_info.RestaurantInfoScreen

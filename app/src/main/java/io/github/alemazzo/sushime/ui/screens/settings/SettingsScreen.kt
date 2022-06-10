@@ -18,12 +18,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import io.github.alemazzo.sushime.BottomBars
 import io.github.alemazzo.sushime.R
-import io.github.alemazzo.sushime.Routes
-import io.github.alemazzo.sushime.ui.navigation.Route
-import io.github.alemazzo.sushime.ui.navigation.RoutePreview
-import io.github.alemazzo.sushime.ui.navigation.Screen
+import io.github.alemazzo.sushime.config.BottomBars
+import io.github.alemazzo.sushime.config.Routes
+import io.github.alemazzo.sushime.navigation.routing.Route
+import io.github.alemazzo.sushime.navigation.routing.RoutePreview
+import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.CircleShapeImage
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextBodySmall
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextTitleMedium

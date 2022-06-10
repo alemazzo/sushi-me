@@ -1,7 +1,8 @@
-package io.github.alemazzo.sushime.ui.navigation
+package io.github.alemazzo.sushime.navigation.routing
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.navigation.NavHostController
+import io.github.alemazzo.sushime.navigation.screen.Screen
 
 @ExperimentalMaterial3Api
 open class Route(

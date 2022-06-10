@@ -8,10 +8,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import io.github.alemazzo.sushime.BottomBars
-import io.github.alemazzo.sushime.Routes
-import io.github.alemazzo.sushime.ui.navigation.Route
-import io.github.alemazzo.sushime.ui.navigation.Screen
+import io.github.alemazzo.sushime.config.BottomBars
+import io.github.alemazzo.sushime.config.Routes
+import io.github.alemazzo.sushime.navigation.routing.Route
+import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.utils.CenteredColumn
 
 @ExperimentalMaterial3Api

@@ -1,12 +1,12 @@
-package io.github.alemazzo.sushime
+package io.github.alemazzo.sushime.config
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
-import io.github.alemazzo.sushime.ui.navigation.BottomBar
-import io.github.alemazzo.sushime.ui.navigation.BottomBarItemInfo
+import io.github.alemazzo.sushime.navigation.screen.bottombar.BottomBar
+import io.github.alemazzo.sushime.navigation.screen.bottombar.BottomBarItemInfo
 
 @ExperimentalMaterial3Api
 object BottomBars {

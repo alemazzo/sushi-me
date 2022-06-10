@@ -26,15 +26,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.navigation.NavHostController
-import io.github.alemazzo.sushime.BottomBars
-import io.github.alemazzo.sushime.Routes
-import io.github.alemazzo.sushime.ui.navigation.Route
-import io.github.alemazzo.sushime.ui.navigation.RoutePreview
-import io.github.alemazzo.sushime.ui.navigation.Screen
+import io.github.alemazzo.sushime.config.BottomBars
+import io.github.alemazzo.sushime.config.Routes
+import io.github.alemazzo.sushime.navigation.routing.Route
+import io.github.alemazzo.sushime.navigation.routing.RoutePreview
+import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.RestaurantInfoCard
 import io.github.alemazzo.sushime.ui.screens.restaurants.viewmodel.RestaurantsScreenViewModel
 import io.github.alemazzo.sushime.utils.getViewModel
 import io.github.alemazzo.sushime.utils.qr.QRScanner
+import androidx.compose.material3.FloatingActionButton as FAB
 
 @ExperimentalMaterial3Api
 object RestaurantsScreen : Screen() {
@@ -43,7 +44,7 @@ object RestaurantsScreen : Screen() {
 
     @Composable
     override fun FloatingActionButton() {
-        androidx.compose.material3.FloatingActionButton(onClick = { isQRScannerVisible = true }) {
+        FAB(onClick = { isQRScannerVisible = true }) {
             Icon(
                 imageVector = Icons.Filled.QrCodeScanner,
                 contentDescription = "Scan"

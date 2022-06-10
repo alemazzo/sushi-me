@@ -1,15 +1,14 @@
 package io.github.alemazzo.sushime.ui.screens.splash
 
-import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.os.Bundle
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
-import io.github.alemazzo.sushime.Routes
-import io.github.alemazzo.sushime.ui.navigation.RoutePreview
-import io.github.alemazzo.sushime.ui.navigation.Screen
+import io.github.alemazzo.sushime.config.Routes
+import io.github.alemazzo.sushime.navigation.routing.RoutePreview
+import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.ui.screens.splash.components.LoadDataAndChangeScreenAtTheEnd
 import io.github.alemazzo.sushime.ui.screens.splash.components.SplashScreenContent
 import io.github.alemazzo.sushime.ui.screens.splash.viewmodel.SplashViewModel
@@ -30,11 +29,7 @@ object SplashScreen : Screen() {
 }
 
 @ExperimentalMaterial3Api
-@Preview(
-    "SplashScreen: Light Theme",
-    uiMode = UI_MODE_NIGHT_NO,
-    showBackground = true
-)
+@Preview
 @Composable
 fun SplashScreenPreview() {
     RoutePreview(route = Routes.SplashRoute)

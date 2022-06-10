@@ -1,4 +1,4 @@
-package io.github.alemazzo.sushime.ui.navigation
+package io.github.alemazzo.sushime.navigation.screen
 
 import android.os.Bundle
 import androidx.compose.foundation.layout.PaddingValues
@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import io.github.alemazzo.sushime.navigation.routing.Route
 
 @ExperimentalMaterial3Api
 abstract class Screen {
@@ -20,7 +21,6 @@ abstract class Screen {
 
     @Composable
     open fun BottomBar(navigator: NavHostController, currentRoute: Route) {
-        
     }
 
     @Composable

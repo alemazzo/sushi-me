@@ -1,23 +1,16 @@
-package io.github.alemazzo.sushime.ui.navigation
+package io.github.alemazzo.sushime.navigation.screen.bottombar
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
+import io.github.alemazzo.sushime.navigation.routing.Route
 
 @ExperimentalMaterial3Api
-data class BottomBarItemInfo constructor(
-    val route: Route,
-    val imageVector: ImageVector,
-    val title: String,
-)
-
-@ExperimentalMaterial3Api
-open class BottomBar(private val routes: List<BottomBarItemInfo>) {
+open class BottomBar(private val items: List<BottomBarItemInfo>) {
     @Composable
     fun Get(currentRoute: Route, navigator: NavHostController) {
         NavigationBar {
-            routes.forEach {
+            items.forEach {
                 NavigationBarItem(
                     selected = it.route == currentRoute,
                     onClick = { it.route.navigate(navigator) },

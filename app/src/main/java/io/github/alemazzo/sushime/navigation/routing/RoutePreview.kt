@@ -1,4 +1,4 @@
-package io.github.alemazzo.sushime.ui.navigation
+package io.github.alemazzo.sushime.navigation.routing
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
