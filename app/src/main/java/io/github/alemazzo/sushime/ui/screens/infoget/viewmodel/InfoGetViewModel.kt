@@ -2,7 +2,7 @@ package io.github.alemazzo.sushime.ui.screens.infoget.viewmodel
 
 import android.app.Application
 import android.widget.Toast
-import io.github.alemazzo.sushime.model.database.store.UserDataStore
+import io.github.alemazzo.sushime.model.store.UserDataStore
 import io.github.alemazzo.sushime.ui.screens.infoget.state.InfoGetScreenState
 import io.github.alemazzo.sushime.utils.AndroidViewModelWithUIState
 import io.github.alemazzo.sushime.utils.withMainContext

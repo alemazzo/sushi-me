@@ -1,4 +1,4 @@
-package io.github.alemazzo.sushime.model.database.store
+package io.github.alemazzo.sushime.model.store
 
 import android.content.Context
 import androidx.datastore.core.DataStore

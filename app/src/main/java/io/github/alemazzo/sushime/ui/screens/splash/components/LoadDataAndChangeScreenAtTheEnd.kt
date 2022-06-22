@@ -6,6 +6,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavHostController
 import io.github.alemazzo.sushime.config.Routes
 import io.github.alemazzo.sushime.ui.screens.splash.viewmodel.SplashViewModel
+import io.github.alemazzo.sushime.utils.withIOContext
 
 @ExperimentalMaterial3Api
 @Composable
@@ -14,7 +15,9 @@ fun LoadDataAndChangeScreenAtTheEnd(
     navController: NavHostController,
 ) {
     LaunchedEffect(true) {
-        splashViewModel.load()
+        withIOContext {
+            splashViewModel.load()
+        }
         navController.backQueue.clear()
 
         if (splashViewModel.hasAlreadyBeenRegistered()) {
