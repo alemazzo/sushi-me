@@ -1,6 +1,15 @@
 package io.github.alemazzo.sushime.ui.screens.settings
 
+import android.content.Context
+import android.content.Context.MODE_PRIVATE
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,7 +23,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -27,12 +39,21 @@ import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.CircleShapeImage
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextBodySmall
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextTitleMedium
-import io.github.alemazzo.sushime.utils.WeightedColumnCentered
-import io.github.alemazzo.sushime.utils.WeightedColumnCenteredHorizontally
-import io.github.alemazzo.sushime.utils.WeightedColumnCenteredVertically
+import io.github.alemazzo.sushime.ui.screens.settings.viewmodel.SettingsViewModel
+import io.github.alemazzo.sushime.utils.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.IOException
 
 @ExperimentalMaterial3Api
 object SettingsScreen : Screen() {
+
+    @Composable
+    override fun TopBar() {
+        CenterAlignedTopAppBar(
+            title = { Text("Settings") }
+        )
+    }
 
     @Composable
     override fun BottomBar(navigator: NavHostController, currentRoute: Route) {
@@ -45,6 +66,7 @@ object SettingsScreen : Screen() {
         paddingValues: PaddingValues,
         arguments: Bundle?,
     ) {
+        val settingsViewModel: SettingsViewModel = getViewModel()
         SettingsScreenContent(navigator, paddingValues)
     }
 
@@ -56,11 +78,12 @@ fun SettingsScreenContent(
     navController: NavHostController,
     paddingValues: PaddingValues,
 ) {
+    val settingsViewModel: SettingsViewModel = getViewModel()
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(
-                top = 16.dp,
+                top = paddingValues.calculateTopPadding(),
                 bottom = paddingValues.calculateBottomPadding(),
                 start = 16.dp,
                 end = 16.dp
@@ -68,7 +91,7 @@ fun SettingsScreenContent(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        UserAccountCard()
+        UserAccountCard(settingsViewModel)
         SettingsSection(paddingValues)
     }
 }
@@ -119,13 +142,10 @@ fun SwitchSettingCard(setting: String) {
 
 @ExperimentalMaterial3Api
 @Composable
-fun UserAccountCard() {
-    var name by remember {
-        mutableStateOf("Alessandro Mazzoli")
-    }
-    var email by remember {
-        mutableStateOf("alemazzoli97@gmail.com")
-    }
+fun UserAccountCard(settingsViewModel: SettingsViewModel) {
+    val name by settingsViewModel.userDataStore.getName().collectAsState(initial = "")
+    val surname by settingsViewModel.userDataStore.getSurname().collectAsState(initial = "")
+    val email by settingsViewModel.userDataStore.getEmail().collectAsState(initial = "")
     var isEditing by remember {
         mutableStateOf(false)
     }
@@ -166,21 +186,98 @@ fun UserAccountCard() {
             WeightedColumnCentered(4f) {
                 UserAccountNameAndEmailSection(
                     isEditing = isEditing,
-                    name = name,
-                    onNameEdit = { name = it },
-                    email = email,
-                    onEmailEdit = { email = it }
+                    name = name!!,
+                    onNameEdit = {
+                        launchWithIOContext {
+                            settingsViewModel.userDataStore.updateName(it)
+                        }
+                    },
+                    surname = surname!!,
+                    onSurnameEdit = {
+                        launchWithIOContext {
+                            settingsViewModel.userDataStore.updateSurname(it)
+                        }
+                    },
+                    email = email!!,
+                    onEmailEdit = {
+                        launchWithIOContext {
+                            settingsViewModel.userDataStore.updateEmail(it)
+                        }
+                    }
                 )
             }
         }
     }
 }
 
+suspend fun loadPhotoFromInternalStorage(context: Context, filename: String): Bitmap? {
+    return withContext(Dispatchers.IO) {
+        val files = context.filesDir.listFiles()
+        var bitmap: Bitmap? = null
+        files?.filter { it.canRead() && it.isFile && it.name.endsWith(".jpg") && it.name == filename + ".jpg" }
+            ?.firstOrNull()
+            ?.also {
+                val bytes = it.readBytes()
+                bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+            }
+        bitmap
+    }
+}
+
+private fun savePhotoToInternalStorage(context: Context, filename: String, bmp: Bitmap): Boolean {
+    return try {
+        context.openFileOutput("$filename.jpg", MODE_PRIVATE).use { stream ->
+            if (!bmp.compress(Bitmap.CompressFormat.JPEG, 95, stream)) {
+                throw IOException("Couldn't save bitmap.")
+            }
+        }
+        true
+    } catch (e: IOException) {
+        e.printStackTrace()
+        false
+    }
+}
+
 @Composable
 fun UserProfileImage() {
+    val context = LocalContext.current
+    val settingsViewModel: SettingsViewModel = getViewModel()
+
+    var image: Bitmap? by remember { settingsViewModel.image }
+
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            launchWithIOContext {
+                var bitmap: Bitmap? = null
+                if (uri != null) {
+                    bitmap = if (Build.VERSION.SDK_INT < 28) {
+                        MediaStore.Images
+                            .Media.getBitmap(context.contentResolver, uri)
+                    } else {
+                        val source = ImageDecoder
+                            .createSource(context.contentResolver, uri)
+                        ImageDecoder.decodeBitmap(source)
+                    }
+                }
+
+                bitmap?.let { bitmapImage ->
+                    withMainContext {
+                        settingsViewModel.image.value = bitmapImage
+                    }
+                    savePhotoToInternalStorage(context, "profile-photo-image", bitmapImage)
+                }
+            }
+        }
+
     CircleShapeImage(
-        painter = painterResource(id = R.drawable.example_restaurant_image),
-        size = 112.dp
+        bitmap = image?.asImageBitmap()
+            ?: ImageBitmap.imageResource(id = R.drawable.example_restaurant_image),
+        size = 112.dp,
+        onClick = {
+            launcher.launch(
+                "image/*"
+            )
+        }
     )
 }
 
@@ -189,6 +286,8 @@ fun UserAccountNameAndEmailSection(
     isEditing: Boolean,
     name: String,
     onNameEdit: (String) -> Unit,
+    surname: String,
+    onSurnameEdit: (String) -> Unit,
     email: String,
     onEmailEdit: (String) -> Unit,
 ) {
@@ -198,13 +297,24 @@ fun UserAccountNameAndEmailSection(
         modifier = Modifier.padding(4.dp)
     ) {
         if (isEditing) {
-            OutlinedTextField(value = name, onValueChange = { onNameEdit(it) })
+            OutlinedTextField(
+                value = name,
+                onValueChange = { onNameEdit(it) },
+                label = { Text("Name") }
+            )
+            OutlinedTextField(
+                value = surname,
+                onValueChange = { onSurnameEdit(it) },
+                label = { Text("Surname") }
+            )
         } else {
-            TextTitleMedium(name)
+            TextTitleMedium("$name $surname")
         }
         Spacer(modifier = Modifier.height(8.dp))
         if (isEditing) {
-            OutlinedTextField(value = email, onValueChange = { onEmailEdit(it) })
+            OutlinedTextField(value = email,
+                onValueChange = { onEmailEdit(it) },
+                label = { Text("Email") })
         } else {
             TextBodySmall(email)
         }

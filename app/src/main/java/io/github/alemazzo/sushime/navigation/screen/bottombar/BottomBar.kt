@@ -6,7 +6,7 @@ import androidx.navigation.NavHostController
 import io.github.alemazzo.sushime.navigation.routing.Route
 
 @ExperimentalMaterial3Api
-open class BottomBar(private val items: List<BottomBarItemInfo>) {
+open class BottomBar(val items: List<BottomBarItemInfo>) {
     @Composable
     fun Get(currentRoute: Route, navigator: NavHostController) {
         NavigationBar {

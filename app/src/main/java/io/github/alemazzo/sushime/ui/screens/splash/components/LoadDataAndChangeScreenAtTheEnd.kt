@@ -16,6 +16,7 @@ fun LoadDataAndChangeScreenAtTheEnd(
     LaunchedEffect(true) {
         splashViewModel.load()
         navController.backQueue.clear()
+
         if (splashViewModel.hasAlreadyBeenRegistered()) {
             Routes.RestaurantsRoute.navigate(navController)
         } else {

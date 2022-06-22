@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import io.github.alemazzo.sushime.navigation.routing.Route
 import io.github.alemazzo.sushime.ui.screens.infoget.InfoGetScreen
 import io.github.alemazzo.sushime.ui.screens.join.JoinScreen
+import io.github.alemazzo.sushime.ui.screens.orders.OrdersScreen
 import io.github.alemazzo.sushime.ui.screens.restaurant_info.RestaurantInfoScreen
 import io.github.alemazzo.sushime.ui.screens.restaurants.RestaurantsScreen
 import io.github.alemazzo.sushime.ui.screens.settings.SettingsScreen
@@ -23,10 +24,6 @@ object Routes {
         screen = InfoGetScreen
     )
 
-    object SettingsRoute : Route(
-        path = "settings",
-        screen = SettingsScreen
-    )
 
     object RestaurantsRoute : Route(
         path = "restaurants",
@@ -36,6 +33,16 @@ object Routes {
     object JoinRoute : Route(
         path = "join",
         screen = JoinScreen
+    )
+
+    object OrdersRoute : Route(
+        path = "orders",
+        screen = OrdersScreen
+    )
+
+    object SettingsRoute : Route(
+        path = "settings",
+        screen = SettingsScreen
     )
 
     private const val restaurantInfoRouteArgName = "restaurantName"
@@ -55,11 +62,18 @@ object Routes {
     }
 
     fun all(): List<Route> = listOf(
+
+        // Startup
         SplashRoute,
         InfoGetRoute,
-        SettingsRoute,
+
+        // Main
         RestaurantsRoute,
         JoinRoute,
+        OrdersRoute,
+        SettingsRoute,
+
+        // Specific
         RestaurantInfoRoute
     )
 }

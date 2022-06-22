@@ -1,6 +1,7 @@
 package io.github.alemazzo.sushime.config
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Settings
@@ -22,6 +23,11 @@ object BottomBars {
                 route = Routes.JoinRoute,
                 imageVector = Icons.Filled.QrCodeScanner,
                 title = "Join"
+            ),
+            BottomBarItemInfo(
+                route = Routes.OrdersRoute,
+                imageVector = Icons.Filled.List,
+                title = "Orders"
             ),
             BottomBarItemInfo(
                 route = Routes.SettingsRoute,

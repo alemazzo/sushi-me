@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -39,19 +40,18 @@ fun RestaurantInfoCard(restaurantInfo: RestaurantInfo, enabled: Boolean, onClick
                 .padding(8.dp)
 
         ) {
-            WeightedColumnCenteredHorizontally(1f){
+            WeightedColumnCenteredHorizontally(1f) {
                 RestaurantInfoCardImageSection(restaurantInfo)
             }
-            WeightedColumnCenteredHorizontally(2f){
+            WeightedColumnCenteredHorizontally(2f) {
                 RestaurantInfoCardNameAndLocationSection(restaurantInfo)
             }
-            WeightedColumnCenteredHorizontally(1f){
+            WeightedColumnCenteredHorizontally(1f) {
                 RestaurantInfoCardStarsSection()
             }
         }
     }
 }
-
 
 
 @Composable
@@ -97,7 +97,7 @@ fun TextBodySmall(description: String) {
 }
 
 @Composable
-fun CircleShapeImage(painter: Painter, size: Dp = 80.dp) {
+fun CircleShapeImage(painter: Painter, size: Dp = 80.dp, onClick: () -> Unit = {}) {
     Image(
         painter = painter,
         contentDescription = "restaurant image",
@@ -106,6 +106,21 @@ fun CircleShapeImage(painter: Painter, size: Dp = 80.dp) {
             .size(size)
             .padding(4.dp)
             .clip(CircleShape)
+            .clickable { onClick() }
+    )
+}
+
+@Composable
+fun CircleShapeImage(bitmap: ImageBitmap, size: Dp = 80.dp, onClick: () -> Unit = {}) {
+    Image(
+        bitmap = bitmap,
+        contentDescription = "restaurant image",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+            .size(size)
+            .padding(4.dp)
+            .clip(CircleShape)
+            .clickable { onClick() }
     )
 }
 
