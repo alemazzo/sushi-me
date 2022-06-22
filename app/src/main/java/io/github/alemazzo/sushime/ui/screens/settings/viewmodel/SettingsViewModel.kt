@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel
 import io.github.alemazzo.sushime.model.store.UserDataStore
 import io.github.alemazzo.sushime.ui.screens.settings.loadPhotoFromInternalStorage
 import io.github.alemazzo.sushime.utils.launchWithIOContext
+import io.github.alemazzo.sushime.utils.withMainContext
 
 class SettingsViewModel(application: Application) :
     AndroidViewModel(application) {
@@ -17,7 +18,10 @@ class SettingsViewModel(application: Application) :
 
     init {
         launchWithIOContext {
-            image.value = loadPhotoFromInternalStorage(application, "profile-photo-image")
+            val bitmap = loadPhotoFromInternalStorage(application, "profile-photo-image")
+            withMainContext {
+                image.value = bitmap
+            }
         }
     }
 

@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -109,6 +110,7 @@ fun RestaurantList(
     padding: PaddingValues,
     enabled: Boolean,
 ) {
+    val ristoranti by restaurantsScreenViewModel.ristorantiDao.getAll().observeAsState()
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -122,11 +124,11 @@ fun RestaurantList(
         state = restaurantsScreenViewModel.listState,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        items(restaurantsScreenViewModel.items, itemContent = {
-            RestaurantInfoCard(restaurantInfo = it, enabled = enabled) {
+        items(ristoranti ?: listOf(), itemContent = {
+            RestaurantInfoCard(ristorante = it, enabled = enabled) {
                 Routes.RestaurantInfoRoute.navigate(
                     navigator = navController,
-                    restaurantName = it.name
+                    restaurantName = it.nome
                 )
             }
         })

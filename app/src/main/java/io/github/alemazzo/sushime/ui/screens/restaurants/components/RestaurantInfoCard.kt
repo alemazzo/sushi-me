@@ -13,11 +13,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import io.github.alemazzo.sushime.R
+import coil.compose.rememberAsyncImagePainter
+import io.github.alemazzo.sushime.model.database.ristorante.Ristorante
 import io.github.alemazzo.sushime.utils.WeightedColumnCenteredHorizontally
 
 data class RestaurantInfo(val name: String, val description: String, val image: Int)
@@ -25,7 +26,7 @@ data class RestaurantInfo(val name: String, val description: String, val image: 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RestaurantInfoCard(restaurantInfo: RestaurantInfo, enabled: Boolean, onClick: () -> Unit) {
+fun RestaurantInfoCard(ristorante: Ristorante, enabled: Boolean, onClick: () -> Unit) {
 
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -41,10 +42,10 @@ fun RestaurantInfoCard(restaurantInfo: RestaurantInfo, enabled: Boolean, onClick
 
         ) {
             WeightedColumnCenteredHorizontally(1f) {
-                RestaurantInfoCardImageSection(restaurantInfo)
+                RestaurantInfoCardImageSection(ristorante)
             }
             WeightedColumnCenteredHorizontally(2f) {
-                RestaurantInfoCardNameAndLocationSection(restaurantInfo)
+                RestaurantInfoCardNameAndLocationSection(ristorante)
             }
             WeightedColumnCenteredHorizontally(1f) {
                 RestaurantInfoCardStarsSection()
@@ -55,20 +56,20 @@ fun RestaurantInfoCard(restaurantInfo: RestaurantInfo, enabled: Boolean, onClick
 
 
 @Composable
-fun RestaurantInfoCardImageSection(restaurantInfo: RestaurantInfo) {
-    CircleShapeImage(painter = painterResource(id = restaurantInfo.image))
+fun RestaurantInfoCardImageSection(ristorante: Ristorante) {
+    CircleShapeImage(painter = rememberAsyncImagePainter("https://picsum.photos/200"))
 }
 
 @Composable
-fun RestaurantInfoCardNameAndLocationSection(restaurantInfo: RestaurantInfo) {
+fun RestaurantInfoCardNameAndLocationSection(ristorante: Ristorante) {
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.Start,
         modifier = Modifier.padding(4.dp)
     ) {
-        TextTitleMedium(name = restaurantInfo.name)
+        TextTitleMedium(name = ristorante.nome)
         Spacer(modifier = Modifier.height(8.dp))
-        TextBodySmall(description = restaurantInfo.description)
+        TextBodySmall(description = ristorante.descrizione)
     }
 }
 
@@ -93,7 +94,10 @@ fun TextTitleMedium(name: String) {
 
 @Composable
 fun TextBodySmall(description: String) {
-    Text(text = description, style = MaterialTheme.typography.bodySmall)
+    Text(text = description,
+        style = MaterialTheme.typography.bodySmall,
+        maxLines = 3,
+        overflow = TextOverflow.Ellipsis)
 }
 
 @Composable
@@ -127,10 +131,10 @@ fun CircleShapeImage(bitmap: ImageBitmap, size: Dp = 80.dp, onClick: () -> Unit 
 @Preview
 @Composable
 fun RestaurantInfoCardPreview() {
-    val restaurantInfo = RestaurantInfo(
-        "Restaurant Name",
-        "Restaurant Description",
-        image = R.drawable.example_restaurant_image
+    val ristorante = Ristorante(
+        1,
+        "Restaurant 1",
+        "Descrizione"
     )
-    RestaurantInfoCard(restaurantInfo, true) {}
+    RestaurantInfoCard(ristorante, true) {}
 }

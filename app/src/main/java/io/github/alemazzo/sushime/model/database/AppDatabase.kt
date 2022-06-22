@@ -8,11 +8,21 @@ import io.github.alemazzo.sushime.model.database.categoria.Categoria
 import io.github.alemazzo.sushime.model.database.categoria.CategorieDao
 import io.github.alemazzo.sushime.model.database.piatto.PiattiDao
 import io.github.alemazzo.sushime.model.database.piatto.Piatto
+import io.github.alemazzo.sushime.model.database.ristorante.Ristorante
+import io.github.alemazzo.sushime.model.database.ristorante.RistorantiDao
 
 
-@Database(entities = [Categoria::class, Piatto::class], version = 1)
+@Database(
+    entities = [
+        Ristorante::class,
+        Categoria::class,
+        Piatto::class
+    ],
+    version = 1
+)
 abstract class AppDatabase : RoomDatabase() {
 
+    abstract fun ristorantiDao(): RistorantiDao
     abstract fun categorieDao(): CategorieDao
     abstract fun piattiDao(): PiattiDao
 
@@ -22,7 +32,7 @@ abstract class AppDatabase : RoomDatabase() {
 
         fun initialize(context: Context) {
             instance = databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
-                .createFromAsset("template.db")
+                .createFromAsset("sushi-me.db")
                 .build()
         }
 
