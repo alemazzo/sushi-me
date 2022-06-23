@@ -86,11 +86,28 @@ fun RestaurantInfoCardStarsSection() {
     }
 }
 
+@Composable
+fun TextTitleLarge(name: String) {
+    Text(text = name, style = MaterialTheme.typography.titleLarge)
+}
 
 @Composable
 fun TextTitleMedium(name: String) {
     Text(text = name, style = MaterialTheme.typography.titleMedium)
 }
+
+@Composable
+fun TextBodyMedium(description: String) {
+    Text(text = description,
+        style = MaterialTheme.typography.bodyMedium)
+}
+
+@Composable
+fun TextBodyLarge(description: String) {
+    Text(text = description,
+        style = MaterialTheme.typography.bodyLarge)
+}
+
 
 @Composable
 fun TextBodySmall(description: String) {

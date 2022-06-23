@@ -32,7 +32,7 @@ object RestaurantInfoScreen : Screen() {
     ) {
         val restaurantName = arguments?.getString("restaurantName")!!
         val restaurantInfoViewModel: RestaurantInfoViewModel = getViewModel()
-        val ristorante by restaurantInfoViewModel.ristorantiDao.getById(restaurantName.toInt())
+        val ristorante by restaurantInfoViewModel.ristorantiDao.getByName(restaurantName)
             .observeAsState()
         ristorante?.let {
             RestaurantInfoScreenContent(navigator, paddingValues, it)
