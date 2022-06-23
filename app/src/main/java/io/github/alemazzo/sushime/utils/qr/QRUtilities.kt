@@ -7,16 +7,16 @@ import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
 
 fun isRestaurantQrCode(content: String): Boolean =
-    content.contains(":") && content.split(":")[0] == "restaurant"
+    content.contains("/") && content.split("/")[0] == "restaurants"
 
 fun isTableQrCode(content: String): Boolean =
-    content.contains(":") && content.split(":")[0] == "table"
+    content.contains("/") && content.split("/")[0] == "tables"
 
 fun getRestaurantIdFromQrCode(content: String): Int? =
-    if (isRestaurantQrCode(content)) content.split(":")[1].toInt() else null
+    if (isRestaurantQrCode(content)) content.split("/")[1].toInt() else null
 
 fun getTableIdFromQrCode(content: String): String? =
-    if (isTableQrCode(content)) content.split(":")[1] else null
+    if (isTableQrCode(content)) content.split("/")[1] else null
 
 fun isValidQRCode(content: String): Boolean = isRestaurantQrCode(content) || isTableQrCode(content)
 

@@ -1,12 +1,14 @@
 package io.github.alemazzo.sushime.ui.screens.splash.viewmodel
 
 import android.app.Application
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.lifecycle.AndroidViewModel
 import io.github.alemazzo.sushime.model.store.user.UserDataStore
 import io.github.alemazzo.sushime.utils.withIOContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 
+@ExperimentalMaterial3Api
 class SplashViewModel(application: Application) :
     AndroidViewModel(application) {
 

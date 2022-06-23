@@ -29,6 +29,7 @@ import io.github.alemazzo.sushime.utils.qr.getQrCodeBitmap
 
 @ExperimentalMaterial3Api
 object CreationScreen : Screen() {
+
     @Composable
     override fun TopBar() {
         CenterAlignedTopAppBar(
@@ -47,6 +48,8 @@ object CreationScreen : Screen() {
         val creationViewModel: CreationViewModel = getViewModel()
         val ristorante by creationViewModel.restaurantsRepository.getById(restaurantId)
             .observeAsState()
+        
+
         ristorante?.let {
             CreationScreenContent(navigator, paddingValues, creationViewModel, it)
         }
