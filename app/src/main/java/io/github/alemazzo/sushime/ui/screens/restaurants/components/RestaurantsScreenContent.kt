@@ -6,7 +6,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
+import io.github.alemazzo.sushime.config.Routes
 import io.github.alemazzo.sushime.ui.screens.restaurants.viewmodel.RestaurantsScreenViewModel
+import io.github.alemazzo.sushime.utils.qr.getRestaurantIdFromQrCode
+import io.github.alemazzo.sushime.utils.qr.isRestaurantQrCode
 
 @ExperimentalMaterial3Api
 @Composable
@@ -23,8 +26,18 @@ fun RestaurantsScreenContent(
         onEnd = {
             onQRScannerVisibilityChange(false)
         },
-        onResult = {
-            Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+        onResult = { result ->
+            if (isRestaurantQrCode(result)) {
+                val restaurantId = getRestaurantIdFromQrCode(result)
+                restaurantId?.let {
+                    Routes.RestaurantInfoRoute.navigate(
+                        navigator = navController,
+                        restaurantId = it
+                    )
+                }
+            } else {
+                Toast.makeText(context, "Not a Sushime QR Code", Toast.LENGTH_LONG).show()
+            }
         }
     )
     RestaurantsList(navController, restaurantsScreenViewModel, padding, isQRScannerVisible.not())

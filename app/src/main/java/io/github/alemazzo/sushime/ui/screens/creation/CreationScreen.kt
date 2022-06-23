@@ -1,7 +1,5 @@
 package io.github.alemazzo.sushime.ui.screens.creation
 
-import android.graphics.Bitmap
-import android.graphics.Color
 import android.os.Bundle
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -17,9 +15,6 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.EncodeHintType
-import com.google.zxing.qrcode.QRCodeWriter
 import io.github.alemazzo.sushime.config.BottomBars
 import io.github.alemazzo.sushime.config.Routes
 import io.github.alemazzo.sushime.model.database.ristorante.Ristorante
@@ -30,7 +25,9 @@ import io.github.alemazzo.sushime.ui.screens.restaurants.components.CircleShapeI
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextTitleLarge
 import io.github.alemazzo.sushime.utils.WeightedColumnCentered
 import io.github.alemazzo.sushime.utils.WeightedColumnCenteredHorizontally
+import io.github.alemazzo.sushime.utils.getRandomString
 import io.github.alemazzo.sushime.utils.getViewModel
+import io.github.alemazzo.sushime.utils.qr.getQrCodeBitmap
 
 @ExperimentalMaterial3Api
 object CreationScreen : Screen() {
@@ -63,27 +60,6 @@ object CreationScreen : Screen() {
     }
 }
 
-fun getRandomString(length: Int): String {
-    val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
-    return (1..length)
-        .map { allowedChars.random() }
-        .joinToString("")
-}
-
-fun getQrCodeBitmap(content: String): Bitmap {
-    val size = 512 //pixels
-    val hints = hashMapOf<EncodeHintType, Int>().also {
-        it[EncodeHintType.MARGIN] = 1
-    } // Make the QR code buffer border narrower
-    val bits = QRCodeWriter().encode(content, BarcodeFormat.QR_CODE, size, size)
-    return Bitmap.createBitmap(size, size, Bitmap.Config.RGB_565).also {
-        for (x in 0 until size) {
-            for (y in 0 until size) {
-                it.setPixel(x, y, if (bits[x, y]) Color.BLACK else Color.WHITE)
-            }
-        }
-    }
-}
 
 @ExperimentalMaterial3Api
 @Composable
