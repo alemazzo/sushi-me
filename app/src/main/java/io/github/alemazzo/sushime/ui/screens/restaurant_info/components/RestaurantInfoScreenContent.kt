@@ -9,15 +9,16 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import io.github.alemazzo.sushime.R
+import coil.compose.rememberAsyncImagePainter
 import io.github.alemazzo.sushime.model.database.ristorante.Ristorante
+import io.github.alemazzo.sushime.ui.screens.restaurant_info.viewmodel.RestaurantInfoViewModel
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.*
 import io.github.alemazzo.sushime.utils.WeightedColumnCentered
 import io.github.alemazzo.sushime.utils.WeightedColumnCenteredHorizontally
@@ -27,6 +28,7 @@ import io.github.alemazzo.sushime.utils.WeightedColumnCenteredHorizontally
 fun RestaurantInfoScreenContent(
     navController: NavHostController,
     paddingValues: PaddingValues,
+    restaurantInfoViewModel: RestaurantInfoViewModel,
     ristorante: Ristorante,
 ) {
     Column(
@@ -42,7 +44,7 @@ fun RestaurantInfoScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         RestaurantInfoCard(ristorante = ristorante)
-        RestaurantInfoMenuRow()
+        RestaurantInfoMenuRow(restaurantInfoViewModel)
         CreateTableButton()
     }
 }
@@ -54,14 +56,15 @@ fun CreateTableButton() {
         modifier = Modifier.clip(RoundedCornerShape(16.dp)),
         onClick = {}
     ) {
-        TextBodyMedium(description = "Create Table")
+        TextBodyLarge(description = "Create Table")
     }
 }
 
 @ExperimentalMaterial3Api
 @Composable
-fun RestaurantInfoMenuRow() {
-    val images = (1..10).map { ImageBitmap.imageResource(id = R.drawable.example_restaurant_image) }
+fun RestaurantInfoMenuRow(restaurantInfoViewModel: RestaurantInfoViewModel) {
+
+    val dishes by restaurantInfoViewModel.dishesRepository.getAll().observeAsState()
 
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -76,22 +79,28 @@ fun RestaurantInfoMenuRow() {
             TextTitleMedium(name = "I Nostri Piatti")
             LazyRow(
                 verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                items(images, itemContent = {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        CircleShapeImage(
-                            bitmap = it,
-                            size = 100.dp
-                        )
-                        TextBodyMedium(description = "Huramaki")
-                    }
-                })
+                dishes?.let {
+                    items(it, itemContent = { dish ->
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            CircleShapeImage(
+                                painter = rememberAsyncImagePainter("https://raw.githubusercontent.com/zucchero-sintattico/sushi-me/main/db/img/${dish.id}.jpg"),
+                                size = 100.dp
+                            )
+                            TextBodyMediumWithMaximumWidth(description = dish.name,
+                                maxWidth = 100.dp)
+                        }
+                    })
+                }
+
+
             }
         }
 
@@ -115,7 +124,7 @@ fun RestaurantInfoCard(ristorante: Ristorante) {
         ) {
             WeightedColumnCenteredHorizontally(2f) {
                 CircleShapeImage(
-                    bitmap = ImageBitmap.imageResource(id = R.drawable.example_restaurant_image),
+                    painter = rememberAsyncImagePainter(model = "https://raw.githubusercontent.com/zucchero-sintattico/sushi-me/main/db/restaurant-img/${ristorante.id}.jpg"),
                     size = 120.dp
                 )
             }

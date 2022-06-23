@@ -57,7 +57,7 @@ fun RestaurantInfoCard(ristorante: Ristorante, enabled: Boolean, onClick: () -> 
 
 @Composable
 fun RestaurantInfoCardImageSection(ristorante: Ristorante) {
-    CircleShapeImage(painter = rememberAsyncImagePainter("https://picsum.photos/200"))
+    CircleShapeImage(painter = rememberAsyncImagePainter(model = "https://raw.githubusercontent.com/zucchero-sintattico/sushi-me/main/db/restaurant-img/${ristorante.id}.jpg"))
 }
 
 @Composable
@@ -100,6 +100,17 @@ fun TextTitleMedium(name: String) {
 fun TextBodyMedium(description: String) {
     Text(text = description,
         style = MaterialTheme.typography.bodyMedium)
+}
+
+@Composable
+fun TextBodyMediumWithMaximumWidth(description: String, maxWidth: Dp) {
+    Text(
+        text = description,
+        modifier = Modifier.widthIn(0.dp, maxWidth),
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        style = MaterialTheme.typography.bodyMedium
+    )
 }
 
 @Composable

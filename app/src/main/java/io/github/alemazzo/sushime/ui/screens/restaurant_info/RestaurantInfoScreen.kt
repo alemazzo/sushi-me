@@ -18,7 +18,6 @@ import io.github.alemazzo.sushime.utils.getViewModel
 @ExperimentalMaterial3Api
 object RestaurantInfoScreen : Screen() {
 
-
     @Composable
     override fun BottomBar(navigator: NavHostController, currentRoute: Route) {
         BottomBars.NavigateBottomBar.Get(Routes.RestaurantsRoute, navigator)
@@ -32,10 +31,10 @@ object RestaurantInfoScreen : Screen() {
     ) {
         val restaurantName = arguments?.getString("restaurantName")!!
         val restaurantInfoViewModel: RestaurantInfoViewModel = getViewModel()
-        val ristorante by restaurantInfoViewModel.ristorantiDao.getByName(restaurantName)
+        val ristorante by restaurantInfoViewModel.restaurantsRepository.getByName(restaurantName)
             .observeAsState()
         ristorante?.let {
-            RestaurantInfoScreenContent(navigator, paddingValues, it)
+            RestaurantInfoScreenContent(navigator, paddingValues, restaurantInfoViewModel, it)
         }
 
     }
