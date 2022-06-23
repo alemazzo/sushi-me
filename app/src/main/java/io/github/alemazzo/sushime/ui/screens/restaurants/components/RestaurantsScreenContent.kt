@@ -29,12 +29,10 @@ fun RestaurantsScreenContent(
         onResult = { result ->
             if (isRestaurantQrCode(result)) {
                 val restaurantId = getRestaurantIdFromQrCode(result)
-                restaurantId?.let {
-                    Routes.RestaurantInfoRoute.navigate(
-                        navigator = navController,
-                        restaurantId = it
-                    )
-                }
+                Routes.RestaurantInfoRoute.navigate(
+                    navigator = navController,
+                    restaurantId = restaurantId!!
+                )
             } else {
                 Toast.makeText(context, "Not a Sushime QR Code", Toast.LENGTH_LONG).show()
             }

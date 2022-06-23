@@ -15,10 +15,8 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import io.github.alemazzo.sushime.config.BottomBars
 import io.github.alemazzo.sushime.config.Routes
 import io.github.alemazzo.sushime.model.database.ristorante.Ristorante
-import io.github.alemazzo.sushime.navigation.routing.Route
 import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.ui.screens.creation.viewmodel.CreationViewModel
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.CircleShapeImage
@@ -36,11 +34,6 @@ object CreationScreen : Screen() {
         CenterAlignedTopAppBar(
             title = { Text("Create Table") }
         )
-    }
-
-    @Composable
-    override fun BottomBar(navigator: NavHostController, currentRoute: Route) {
-        BottomBars.NavigateBottomBar.Get(Routes.RestaurantsRoute, navigator)
     }
 
     @Composable

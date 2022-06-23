@@ -55,7 +55,7 @@ fun UserProfileImage() {
 
     CircleShapeImage(
         bitmap = image?.asImageBitmap()
-            ?: ImageBitmap.imageResource(id = R.drawable.example_restaurant_image),
+            ?: ImageBitmap.imageResource(id = R.drawable.avatar),
         size = 112.dp,
         onClick = {
             launcher.launch(

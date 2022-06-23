@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import io.github.alemazzo.sushime.config.Routes
 import io.github.alemazzo.sushime.ui.screens.infoget.viewmodel.InfoGetViewModel
+import io.github.alemazzo.sushime.ui.screens.settings.components.UserProfileImage
 import io.github.alemazzo.sushime.utils.getViewModel
 import io.github.alemazzo.sushime.utils.launchWithIOContext
 import io.github.alemazzo.sushime.utils.withMainContext
@@ -38,6 +39,7 @@ fun InfoGetScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("Sushi-me", style = MaterialTheme.typography.titleLarge)
+        UserProfileImage()
         Text("Please insert your info", style = MaterialTheme.typography.titleMedium)
         RoundedTextField(
             label = "Email",
