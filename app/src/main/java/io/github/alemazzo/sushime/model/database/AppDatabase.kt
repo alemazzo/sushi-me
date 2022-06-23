@@ -31,9 +31,11 @@ abstract class AppDatabase : RoomDatabase() {
         private var instance: AppDatabase? = null
 
         private fun initialize(context: Context) {
-            instance = databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
-                .createFromAsset("sushi-me.db")
-                .build()
+            synchronized(this) {
+                instance = databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
+                    .createFromAsset("sushi-me.db")
+                    .build()
+            }
         }
 
         fun getInstance(context: Context): AppDatabase {

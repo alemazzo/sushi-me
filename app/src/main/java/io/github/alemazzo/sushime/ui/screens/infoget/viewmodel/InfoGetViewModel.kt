@@ -11,8 +11,8 @@ import kotlinx.coroutines.delay
 class InfoGetViewModel(application: Application) :
     AndroidViewModelWithUIState<InfoGetScreenState>(application) {
 
-    private val userDataStore = UserDataStore(application)
-
+    private val userDataStore = UserDataStore.getInstance(application)
+    
     override val uiState: InfoGetScreenState = InfoGetScreenState()
 
     suspend fun registerInfo() {

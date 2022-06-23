@@ -9,7 +9,24 @@ import androidx.datastore.preferences.preferencesDataStore
 import io.github.alemazzo.sushime.model.store.getProperty
 import io.github.alemazzo.sushime.model.store.updateProperty
 
-class UserDataStore(context: Context) {
+class UserDataStore private constructor(context: Context) {
+
+    companion object {
+        private var instance: UserDataStore? = null
+
+        private fun initialize(context: Context) {
+            synchronized(this) {
+                instance = UserDataStore(context)
+            }
+        }
+
+        fun getInstance(context: Context): UserDataStore {
+            if (instance == null) {
+                initialize(context)
+            }
+            return instance!!
+        }
+    }
 
     object Keys {
         val USER_ALREADY_REGISTERED = booleanPreferencesKey("user-registered")

@@ -1,4 +1,4 @@
-package io.github.alemazzo.sushime.ui.screens.infoget
+package io.github.alemazzo.sushime.ui.screens.infoget.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import io.github.alemazzo.sushime.config.Routes
-import io.github.alemazzo.sushime.ui.screens.infoget.components.RoundedTextField
 import io.github.alemazzo.sushime.ui.screens.infoget.viewmodel.InfoGetViewModel
 import io.github.alemazzo.sushime.utils.getViewModel
 import io.github.alemazzo.sushime.utils.launchWithIOContext

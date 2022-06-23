@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.first
 class SplashViewModel(application: Application) :
     AndroidViewModel(application) {
 
-    private val userDataStore = UserDataStore(application)
+    private val userDataStore = UserDataStore.getInstance(application)
 
     suspend fun load() {
         withIOContext {

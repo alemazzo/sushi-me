@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import io.github.alemazzo.sushime.config.Routes
 import io.github.alemazzo.sushime.navigation.routing.RoutePreview
 import io.github.alemazzo.sushime.navigation.screen.Screen
+import io.github.alemazzo.sushime.ui.screens.infoget.components.InfoGetScreenContent
 import io.github.alemazzo.sushime.ui.screens.infoget.viewmodel.InfoGetViewModel
 import io.github.alemazzo.sushime.utils.getViewModel
 

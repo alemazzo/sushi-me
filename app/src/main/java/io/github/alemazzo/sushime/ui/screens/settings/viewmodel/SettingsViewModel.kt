@@ -14,7 +14,7 @@ class SettingsViewModel(application: Application) :
     AndroidViewModel(application) {
 
     var image: MutableState<Bitmap?> = mutableStateOf(null)
-    val userDataStore = UserDataStore(application)
+    val userDataStore = UserDataStore.getInstance(application)
 
     init {
         launchWithIOContext {
