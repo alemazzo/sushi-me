@@ -23,8 +23,8 @@ class OrdersViewModel(application: Application) : AndroidViewModel(application) 
 
     private val db = AppDatabase.getInstance(application)
 
-    val categorieDao = db.categorieDao()
-    val piattiDao = db.piattiDao()
+    val categorieDao = db.categoriesDao()
+    val piattiDao = db.dishesDao()
 
 }
 

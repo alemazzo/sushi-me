@@ -22,15 +22,15 @@ import io.github.alemazzo.sushime.model.database.ristorante.RistorantiDao
 )
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun ristorantiDao(): RistorantiDao
-    abstract fun categorieDao(): CategorieDao
-    abstract fun piattiDao(): PiattiDao
+    abstract fun restaurantsDao(): RistorantiDao
+    abstract fun categoriesDao(): CategorieDao
+    abstract fun dishesDao(): PiattiDao
 
     companion object {
-        const val DATABASE_NAME = "sushi-me.db"
+        private const val DATABASE_NAME = "sushi-me.db"
         private var instance: AppDatabase? = null
 
-        fun initialize(context: Context) {
+        private fun initialize(context: Context) {
             instance = databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
                 .createFromAsset("sushi-me.db")
                 .build()

@@ -2,7 +2,7 @@ package io.github.alemazzo.sushime.ui.screens.infoget.viewmodel
 
 import android.app.Application
 import android.widget.Toast
-import io.github.alemazzo.sushime.model.store.UserDataStore
+import io.github.alemazzo.sushime.model.store.user.UserDataStore
 import io.github.alemazzo.sushime.ui.screens.infoget.state.InfoGetScreenState
 import io.github.alemazzo.sushime.utils.AndroidViewModelWithUIState
 import io.github.alemazzo.sushime.utils.withMainContext
@@ -10,9 +10,10 @@ import kotlinx.coroutines.delay
 
 class InfoGetViewModel(application: Application) :
     AndroidViewModelWithUIState<InfoGetScreenState>(application) {
-    override val uiState: InfoGetScreenState = InfoGetScreenState()
 
     private val userDataStore = UserDataStore(application)
+
+    override val uiState: InfoGetScreenState = InfoGetScreenState()
 
     suspend fun registerInfo() {
         val email = uiState.email.value

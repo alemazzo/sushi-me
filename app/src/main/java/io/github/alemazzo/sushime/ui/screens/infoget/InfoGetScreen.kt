@@ -9,6 +9,8 @@ import androidx.navigation.NavHostController
 import io.github.alemazzo.sushime.config.Routes
 import io.github.alemazzo.sushime.navigation.routing.RoutePreview
 import io.github.alemazzo.sushime.navigation.screen.Screen
+import io.github.alemazzo.sushime.ui.screens.infoget.viewmodel.InfoGetViewModel
+import io.github.alemazzo.sushime.utils.getViewModel
 
 @ExperimentalMaterial3Api
 object InfoGetScreen : Screen() {
@@ -19,6 +21,7 @@ object InfoGetScreen : Screen() {
         paddingValues: PaddingValues,
         arguments: Bundle?,
     ) {
+        val infoGetViewModel: InfoGetViewModel = getViewModel()
         InfoGetScreenContent(navigator, paddingValues)
     }
 

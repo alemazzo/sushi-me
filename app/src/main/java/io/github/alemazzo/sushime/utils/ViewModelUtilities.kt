@@ -2,6 +2,7 @@ package io.github.alemazzo.sushime.utils
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import io.github.alemazzo.sushime.model.database.AppDatabase
 
 
 /**
@@ -13,4 +14,8 @@ abstract class AndroidViewModelWithUIState<T>(application: Application) :
 
     /** The UI State of the screen */
     abstract val uiState: T
+}
+
+fun AndroidViewModel.getDatabase(): AppDatabase {
+    return AppDatabase.getInstance(getApplication())
 }
