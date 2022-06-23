@@ -29,7 +29,8 @@ object RestaurantInfoScreen : Screen() {
         paddingValues: PaddingValues,
         arguments: Bundle?,
     ) {
-        val restaurantName = arguments?.getString("restaurantName")!!
+        val restaurantName =
+            arguments?.getString(Routes.RestaurantInfoRoute.restaurantNameArgName)!!
         val restaurantInfoViewModel: RestaurantInfoViewModel = getViewModel()
         val ristorante by restaurantInfoViewModel.restaurantsRepository.getByName(restaurantName)
             .observeAsState()

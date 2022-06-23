@@ -12,15 +12,21 @@ import io.github.alemazzo.sushime.ui.screens.settings.viewmodel.SettingsViewMode
 import io.github.alemazzo.sushime.utils.WeightedColumnCentered
 import io.github.alemazzo.sushime.utils.WeightedColumnCenteredHorizontally
 import io.github.alemazzo.sushime.utils.launchWithIOContext
+import kotlinx.coroutines.flow.first
 
 @ExperimentalMaterial3Api
 @Composable
 fun UserAccountCard(settingsViewModel: SettingsViewModel) {
-    val name by settingsViewModel.userDataStore.getName().collectAsState(initial = "")
-    val surname by settingsViewModel.userDataStore.getSurname().collectAsState(initial = "")
-    val email by settingsViewModel.userDataStore.getEmail().collectAsState(initial = "")
     var isEditing by remember {
         mutableStateOf(false)
+    }
+    var name by remember { mutableStateOf("") }
+    var surname by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    LaunchedEffect(key1 = true) {
+        name = settingsViewModel.userDataStore.getName().first()!!
+        surname = settingsViewModel.userDataStore.getSurname().first()!!
+        email = settingsViewModel.userDataStore.getEmail().first()!!
     }
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -42,7 +48,16 @@ fun UserAccountCard(settingsViewModel: SettingsViewModel) {
                 )
             }
             WeightedColumnCenteredHorizontally(1f) {
-                EditIconSection(isEditing) { isEditing = !isEditing }
+                EditIconSection(isEditing) {
+                    if (isEditing) {
+                        launchWithIOContext {
+                            settingsViewModel.userDataStore.updateName(name)
+                            settingsViewModel.userDataStore.updateSurname(surname)
+                            settingsViewModel.userDataStore.updateEmail(email)
+                        }
+                    }
+                    isEditing = !isEditing
+                }
             }
         }
         Row(
@@ -59,23 +74,17 @@ fun UserAccountCard(settingsViewModel: SettingsViewModel) {
             WeightedColumnCentered(4f) {
                 UserAccountNameAndEmailSection(
                     isEditing = isEditing,
-                    name = name!!,
+                    name = name,
                     onNameEdit = {
-                        launchWithIOContext {
-                            settingsViewModel.userDataStore.updateName(it)
-                        }
+                        name = it
                     },
-                    surname = surname!!,
+                    surname = surname,
                     onSurnameEdit = {
-                        launchWithIOContext {
-                            settingsViewModel.userDataStore.updateSurname(it)
-                        }
+                        surname = it
                     },
-                    email = email!!,
+                    email = email,
                     onEmailEdit = {
-                        launchWithIOContext {
-                            settingsViewModel.userDataStore.updateEmail(it)
-                        }
+                        email = email
                     }
                 )
             }

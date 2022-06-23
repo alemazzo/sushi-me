@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
+import io.github.alemazzo.sushime.config.Routes
 import io.github.alemazzo.sushime.model.database.ristorante.Ristorante
 import io.github.alemazzo.sushime.ui.screens.restaurant_info.viewmodel.RestaurantInfoViewModel
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.*
@@ -29,7 +30,7 @@ fun RestaurantInfoScreenContent(
     navController: NavHostController,
     paddingValues: PaddingValues,
     restaurantInfoViewModel: RestaurantInfoViewModel,
-    ristorante: Ristorante,
+    restaurant: Ristorante,
 ) {
     Column(
         modifier = Modifier
@@ -43,18 +44,20 @@ fun RestaurantInfoScreenContent(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        RestaurantInfoCard(ristorante = ristorante)
+        RestaurantInfoCard(ristorante = restaurant)
         RestaurantInfoMenuRow(restaurantInfoViewModel)
-        CreateTableButton()
+        CreateTableButton(navigator = navController, restaurant = restaurant)
     }
 }
 
 @ExperimentalMaterial3Api
 @Composable
-fun CreateTableButton() {
+fun CreateTableButton(navigator: NavHostController, restaurant: Ristorante) {
     Button(
         modifier = Modifier.clip(RoundedCornerShape(16.dp)),
-        onClick = {}
+        onClick = {
+            Routes.CreationRoute.navigate(navigator, restaurant.id)
+        }
     ) {
         TextBodyLarge(description = "Create Table")
     }

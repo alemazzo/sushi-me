@@ -3,6 +3,7 @@ package io.github.alemazzo.sushime.config
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.navigation.NavHostController
 import io.github.alemazzo.sushime.navigation.routing.Route
+import io.github.alemazzo.sushime.ui.screens.creation.CreationScreen
 import io.github.alemazzo.sushime.ui.screens.infoget.InfoGetScreen
 import io.github.alemazzo.sushime.ui.screens.join.JoinScreen
 import io.github.alemazzo.sushime.ui.screens.orders.OrdersScreen
@@ -14,6 +15,7 @@ import io.github.alemazzo.sushime.ui.screens.splash.SplashScreen
 @ExperimentalMaterial3Api
 object Routes {
 
+    // Startup Routes
     object SplashRoute : Route(
         path = "splash",
         screen = SplashScreen
@@ -25,6 +27,7 @@ object Routes {
     )
 
 
+    // Homepage routes
     object RestaurantsRoute : Route(
         path = "restaurants",
         screen = RestaurantsScreen
@@ -45,6 +48,7 @@ object Routes {
         screen = SettingsScreen
     )
 
+    // Specific routes
     private const val restaurantInfoRouteArgName = "restaurantName"
 
     object RestaurantInfoRoute : Route(
@@ -52,14 +56,32 @@ object Routes {
         arguments = listOf(restaurantInfoRouteArgName),
         screen = RestaurantInfoScreen
     ) {
+        val restaurantNameArgName = restaurantInfoRouteArgName
         fun navigate(navigator: NavHostController, restaurantName: String) {
             navigate(
                 navigator = navigator,
                 arguments = mapOf(restaurantInfoRouteArgName to restaurantName)
             )
         }
-
     }
+
+    // Table routes
+    private const val createRouteArgName = "restaurantId"
+
+    object CreationRoute : Route(
+        path = "create/{$createRouteArgName}",
+        arguments = listOf(createRouteArgName),
+        screen = CreationScreen
+    ) {
+        val createRouteRestaurantIdArgName = createRouteArgName
+        fun navigate(navigator: NavHostController, restaurantId: Int) {
+            navigate(
+                navigator = navigator,
+                arguments = mapOf(createRouteArgName to restaurantId.toString())
+            )
+        }
+    }
+
 
     fun all(): List<Route> = listOf(
 
@@ -74,6 +96,9 @@ object Routes {
         SettingsRoute,
 
         // Specific
-        RestaurantInfoRoute
+        RestaurantInfoRoute,
+
+        // Table
+        CreationRoute
     )
 }
