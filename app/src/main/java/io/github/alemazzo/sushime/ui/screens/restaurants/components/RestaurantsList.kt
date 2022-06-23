@@ -42,7 +42,7 @@ fun RestaurantsList(
             RestaurantInfoCard(ristorante = it, enabled = enabled) {
                 Routes.RestaurantInfoRoute.navigate(
                     navigator = navController,
-                    restaurantName = it.nome
+                    restaurantId = it.id
                 )
             }
         })

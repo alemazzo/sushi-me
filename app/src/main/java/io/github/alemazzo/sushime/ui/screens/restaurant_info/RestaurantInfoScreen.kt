@@ -29,10 +29,10 @@ object RestaurantInfoScreen : Screen() {
         paddingValues: PaddingValues,
         arguments: Bundle?,
     ) {
-        val restaurantName =
-            arguments?.getString(Routes.RestaurantInfoRoute.restaurantNameArgName)!!
+        val restaurantId =
+            arguments?.getString(Routes.RestaurantInfoRoute.restaurantIdArgName)!!.toInt()
         val restaurantInfoViewModel: RestaurantInfoViewModel = getViewModel()
-        val ristorante by restaurantInfoViewModel.restaurantsRepository.getByName(restaurantName)
+        val ristorante by restaurantInfoViewModel.restaurantsRepository.getById(restaurantId)
             .observeAsState()
         ristorante?.let {
             RestaurantInfoScreenContent(navigator, paddingValues, restaurantInfoViewModel, it)

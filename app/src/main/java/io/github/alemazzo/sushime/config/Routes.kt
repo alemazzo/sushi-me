@@ -49,18 +49,18 @@ object Routes {
     )
 
     // Specific routes
-    private const val restaurantInfoRouteArgName = "restaurantName"
+    private const val restaurantInfoRouteArgName = "restaurantId"
 
     object RestaurantInfoRoute : Route(
         path = "restaurant/{$restaurantInfoRouteArgName}",
         arguments = listOf(restaurantInfoRouteArgName),
         screen = RestaurantInfoScreen
     ) {
-        val restaurantNameArgName = restaurantInfoRouteArgName
-        fun navigate(navigator: NavHostController, restaurantName: String) {
+        val restaurantIdArgName = restaurantInfoRouteArgName
+        fun navigate(navigator: NavHostController, restaurantId: Int) {
             navigate(
                 navigator = navigator,
-                arguments = mapOf(restaurantInfoRouteArgName to restaurantName)
+                arguments = mapOf(restaurantInfoRouteArgName to restaurantId.toString())
             )
         }
     }

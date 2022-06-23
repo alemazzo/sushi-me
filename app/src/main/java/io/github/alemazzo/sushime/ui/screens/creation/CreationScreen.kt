@@ -1,6 +1,9 @@
 package io.github.alemazzo.sushime.ui.screens.creation
 
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -9,9 +12,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.EncodeHintType
+import com.google.zxing.qrcode.QRCodeWriter
 import io.github.alemazzo.sushime.config.BottomBars
 import io.github.alemazzo.sushime.config.Routes
 import io.github.alemazzo.sushime.model.database.ristorante.Ristorante
@@ -19,7 +27,6 @@ import io.github.alemazzo.sushime.navigation.routing.Route
 import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.ui.screens.creation.viewmodel.CreationViewModel
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.CircleShapeImage
-import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextBodySmall
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextTitleLarge
 import io.github.alemazzo.sushime.utils.WeightedColumnCentered
 import io.github.alemazzo.sushime.utils.WeightedColumnCenteredHorizontally
@@ -56,6 +63,28 @@ object CreationScreen : Screen() {
     }
 }
 
+fun getRandomString(length: Int): String {
+    val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
+    return (1..length)
+        .map { allowedChars.random() }
+        .joinToString("")
+}
+
+fun getQrCodeBitmap(content: String): Bitmap {
+    val size = 512 //pixels
+    val hints = hashMapOf<EncodeHintType, Int>().also {
+        it[EncodeHintType.MARGIN] = 1
+    } // Make the QR code buffer border narrower
+    val bits = QRCodeWriter().encode(content, BarcodeFormat.QR_CODE, size, size)
+    return Bitmap.createBitmap(size, size, Bitmap.Config.RGB_565).also {
+        for (x in 0 until size) {
+            for (y in 0 until size) {
+                it.setPixel(x, y, if (bits[x, y]) Color.BLACK else Color.WHITE)
+            }
+        }
+    }
+}
+
 @ExperimentalMaterial3Api
 @Composable
 fun CreationScreenContent(
@@ -64,6 +93,9 @@ fun CreationScreenContent(
     creationViewModel: CreationViewModel,
     restaurant: Ristorante,
 ) {
+    val code = getRandomString(5)
+    val qrCodeContent = "${restaurant.id}-$code"
+    val qrImage = getQrCodeBitmap(qrCodeContent)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -77,6 +109,22 @@ fun CreationScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         RestaurantInfoCardInCreation(ristorante = restaurant)
+        Image(
+            bitmap = qrImage.asImageBitmap(),
+            contentDescription = "QRCode",
+            modifier = Modifier
+                .clip(RoundedCornerShape(16.dp))
+                .size(250.dp)
+        )
+        TextTitleLarge(name = "Code: $qrCodeContent")
+        Button(
+            modifier = Modifier.clip(RoundedCornerShape(16.dp)),
+            onClick = {
+
+            }
+        ) {
+            TextTitleLarge(name = "Start Order")
+        }
     }
 }
 
@@ -108,7 +156,6 @@ fun RestaurantInfoCardInCreation(ristorante: Ristorante) {
                     modifier = Modifier.padding(4.dp)
                 ) {
                     TextTitleLarge(ristorante.nome)
-                    TextBodySmall(description = "Via Salvatore Quasimodo 421, Cesena, 47522")
                 }
             }
         }
