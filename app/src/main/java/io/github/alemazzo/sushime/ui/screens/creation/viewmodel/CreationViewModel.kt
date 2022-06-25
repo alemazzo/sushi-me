@@ -9,4 +9,5 @@ class CreationViewModel(application: Application) : AndroidViewModel(application
 
     private val db = getDatabase()
     val restaurantsRepository = RestaurantsRepository(db)
+
 }

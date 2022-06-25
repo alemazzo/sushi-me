@@ -62,12 +62,15 @@ object OrderMenuScreen : Screen() {
             }
         }
 
-
-
-        if (!isConnected) LoadingScreen(paddingValues)
-        else OrderMenuContent(
-            navigator, paddingValues, tableId, orderViewModel)
-
+        when {
+            !isConnected -> LoadingScreen(paddingValues)
+            else -> OrderMenuContent(
+                navigator = navigator,
+                paddingValues = paddingValues,
+                tableId = tableId,
+                orderViewModel = orderViewModel
+            )
+        }
 
     }
 }

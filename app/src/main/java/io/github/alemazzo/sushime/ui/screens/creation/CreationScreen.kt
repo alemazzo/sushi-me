@@ -19,7 +19,6 @@ import io.github.alemazzo.sushime.model.database.ristorante.Ristorante
 import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.ui.screens.creation.viewmodel.CreationViewModel
 import io.github.alemazzo.sushime.ui.screens.order_menu.OrderViewModel
-import io.github.alemazzo.sushime.ui.screens.order_menu.SingleOrder
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.CircleShapeImage
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextTitleLarge
 import io.github.alemazzo.sushime.utils.*
@@ -41,69 +40,59 @@ object CreationScreen : Screen() {
         paddingValues: PaddingValues,
         arguments: Bundle?,
     ) {
+        val creationViewModel: CreationViewModel = getViewModel()
         val restaurantId =
             arguments?.getString(Routes.CreationRoute.createRouteRestaurantIdArgName)!!.toInt()
-        val creationViewModel: CreationViewModel = getViewModel()
-        val ristorante by creationViewModel.restaurantsRepository.getById(restaurantId)
+        val restaurant by creationViewModel.restaurantsRepository.getById(restaurantId)
             .observeAsState()
-
-
-        val orderViewModel: OrderViewModel = getViewModel()
 
         var ready by remember {
             mutableStateOf(false)
         }
-
-        var code: String? by remember {
-            mutableStateOf(null)
-        }
-        LaunchedEffect(key1 = true) {
-            code = getRandomString(5)
-            orderViewModel.tableId = code
-            orderViewModel.createMqttInstance { mqtt ->
-                mqtt.connect { _ ->
-                    mqtt.joinAsCreator(
-                        tableId = code!!,
-                        onNewUser = { orderViewModel.users.add(it) },
-                        onNewOrderSent = { orderViewModel.orders.add(SingleOrder.fromString(it)) }
-                    ) {
-                        ready = true
-                    }
-                }
-            }
+        CreateTable {
+            ready = true
         }
 
-
-
-        if (!ready) CenteredColumn(modifier = Modifier.padding(paddingValues)) {
-            CircularProgressIndicator()
+        when {
+            !ready || restaurant == null -> ShowCircularProgressIndicator(paddingValues)
+            else -> CreationScreenContent(
+                navigator = navigator,
+                paddingValues = paddingValues,
+                restaurant = restaurant!!
+            )
         }
-        else {
-            ristorante?.let {
-                CreationScreenContent(navigator,
-                    paddingValues,
-                    creationViewModel,
-                    it,
-                    orderViewModel,
-                    code!!)
-            }
-        }
-
     }
 }
 
+@Composable
+fun CreateTable(orderViewModel: OrderViewModel = getViewModel(), onComplete: () -> Unit) {
+    LaunchedEffect(key1 = true) {
+        getRandomString(5).let { tableId ->
+            orderViewModel.createTable(tableId) {
+                onComplete()
+            }
+        }
+    }
+}
+
+@Composable
+fun ShowCircularProgressIndicator(paddingValues: PaddingValues) {
+    CenteredColumn(modifier = Modifier.padding(paddingValues)) {
+        CircularProgressIndicator()
+    }
+}
 
 @ExperimentalMaterial3Api
 @Composable
 fun CreationScreenContent(
     navigator: NavHostController,
     paddingValues: PaddingValues,
-    creationViewModel: CreationViewModel,
     restaurant: Ristorante,
-    orderViewModel: OrderViewModel,
-    code: String,
+    creationViewModel: CreationViewModel = getViewModel(),
+    orderViewModel: OrderViewModel = getViewModel(),
 ) {
-    val qrImage = getQrCodeBitmap(code)
+    val tableId = orderViewModel.tableId!!
+    val qrImage = getQrCodeBitmap(tableId)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -124,7 +113,7 @@ fun CreationScreenContent(
                 .clip(RoundedCornerShape(16.dp))
                 .size(250.dp)
         )
-        TextTitleLarge(name = "Code: $code")
+        TextTitleLarge(name = "Code: $tableId")
         Button(
             modifier = Modifier.clip(RoundedCornerShape(16.dp)),
             onClick = {
@@ -132,7 +121,7 @@ fun CreationScreenContent(
             }
         ) {
             Button(onClick = {
-                Routes.OrderMenuRoute.navigate(navigator, code)
+                Routes.OrderMenuRoute.navigate(navigator, tableId)
             }) {
                 TextTitleLarge(name = "Start Order")
             }

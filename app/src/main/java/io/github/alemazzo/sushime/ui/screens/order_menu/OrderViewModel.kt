@@ -94,11 +94,25 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun createMqttInstance(onCreated: (SushimeMqtt) -> Unit = {}) {
-        if (sushimeMqtt != null) {
-            onCreated(sushimeMqtt!!)
-            return
+    fun createTable(tableId: String, onCreated: () -> Unit = {}) {
+        if (sushimeMqtt != null) return
+        this.tableId = tableId
+        launchWithIOContext {
+            sushimeMqtt = SushimeMqtt(_application, userDataStore.getEmail().first()!!)
+            sushimeMqtt!!.connect {
+                sushimeMqtt!!.joinAsCreator(
+                    tableId = tableId,
+                    onNewUser = { users.add(it) },
+                    onNewOrderSent = { orders.add(SingleOrder.fromString(it)) }
+                ) {
+                    onCreated()
+                }
+            }
         }
+    }
+
+    fun createMqttInstance(onCreated: (SushimeMqtt) -> Unit = {}) {
+        if (sushimeMqtt != null) return
         launchWithIOContext {
             sushimeMqtt = SushimeMqtt(_application, userDataStore.getEmail().first()!!)
             onCreated(sushimeMqtt!!)
