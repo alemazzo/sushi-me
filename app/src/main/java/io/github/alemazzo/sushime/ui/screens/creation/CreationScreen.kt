@@ -19,6 +19,7 @@ import io.github.alemazzo.sushime.config.Routes
 import io.github.alemazzo.sushime.model.database.ristorante.Ristorante
 import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.ui.screens.creation.viewmodel.CreationViewModel
+import io.github.alemazzo.sushime.ui.screens.order_menu.OrderViewModel
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.CircleShapeImage
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextTitleLarge
 import io.github.alemazzo.sushime.utils.WeightedColumnCentered
@@ -48,10 +49,16 @@ object CreationScreen : Screen() {
         val creationViewModel: CreationViewModel = getViewModel()
         val ristorante by creationViewModel.restaurantsRepository.getById(restaurantId)
             .observeAsState()
-        
 
+
+        val orderViewModel: OrderViewModel = getViewModel()
+        val mqtt = orderViewModel.sushimeMqtt
+
+        mqtt.connect {
+
+        }
         ristorante?.let {
-            CreationScreenContent(navigator, paddingValues, creationViewModel, it)
+            CreationScreenContent(navigator, paddingValues, creationViewModel, it, orderViewModel)
         }
     }
 }
@@ -64,10 +71,10 @@ fun CreationScreenContent(
     paddingValues: PaddingValues,
     creationViewModel: CreationViewModel,
     restaurant: Ristorante,
+    orderViewModel: OrderViewModel,
 ) {
     val code = getRandomString(5)
-    val qrCodeContent = "${restaurant.id}-$code"
-    val qrImage = getQrCodeBitmap(qrCodeContent)
+    val qrImage = getQrCodeBitmap(code)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -88,14 +95,18 @@ fun CreationScreenContent(
                 .clip(RoundedCornerShape(16.dp))
                 .size(250.dp)
         )
-        TextTitleLarge(name = "Code: $qrCodeContent")
+        TextTitleLarge(name = "Code: $code")
         Button(
             modifier = Modifier.clip(RoundedCornerShape(16.dp)),
             onClick = {
 
             }
         ) {
-            TextTitleLarge(name = "Start Order")
+            Button(onClick = {
+                Routes.OrderMenuRoute.navigate(navigator, code)
+            }) {
+                TextTitleLarge(name = "Start Order")
+            }
         }
     }
 }

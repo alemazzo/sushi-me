@@ -1,10 +1,7 @@
 package io.github.alemazzo.sushime.config
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.QrCodeScanner
-import androidx.compose.material.icons.filled.Restaurant
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import io.github.alemazzo.sushime.navigation.screen.bottombar.BottomBar
 import io.github.alemazzo.sushime.navigation.screen.bottombar.BottomBarItemInfo
@@ -34,6 +31,21 @@ object BottomBars {
                 imageVector = Icons.Filled.Settings,
                 title = "Settings"
             ),
+        )
+    )
+
+    object OrderBottomBar : BottomBar(
+        listOf(
+            BottomBarItemInfo(
+                route = Routes.OrderMenuRoute,
+                imageVector = Icons.Filled.Menu,
+                title = "Menu"
+            ),
+            BottomBarItemInfo(
+                route = Routes.OrderCartRoute,
+                imageVector = Icons.Filled.ShoppingCart,
+                title = "Cart"
+            )
         )
     )
 }

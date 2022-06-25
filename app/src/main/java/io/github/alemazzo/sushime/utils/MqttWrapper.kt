@@ -2,20 +2,27 @@ package io.github.alemazzo.sushime.utils
 
 import android.content.Context
 import android.util.Log
-import org.eclipse.paho.android.service.MqttAndroidClient
+import info.mqtt.android.service.Ack
+import info.mqtt.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
 
-class MqttWrapper {
+class MqttWrapper(context: Context) {
+
     companion object {
         const val TAG = "MqttWrapper"
     }
 
-    private lateinit var mqttClient: MqttAndroidClient
+    private val serverURI = "tcp://broker.emqx.io:1883"
+    private val mqttClient: MqttAndroidClient =
+        MqttAndroidClient(context, serverURI, "kotlin_client", Ack.AUTO_ACK)
     private val channelMap = mutableMapOf<String, (String) -> Unit>()
+    var isConnected = false
 
-    fun connect(context: Context) {
-        val serverURI = "tcp://broker.emqx.io:1883"
-        mqttClient = MqttAndroidClient(context, serverURI, "kotlin_client")
+    fun connect(onConnect: (MqttWrapper) -> Unit) {
+        if (mqttClient.isConnected) {
+            onConnect(this)
+            return
+        }
         mqttClient.setCallback(object : MqttCallback {
             override fun messageArrived(topic: String?, message: MqttMessage?) {
                 Log.d(TAG, "Receive message: ${message.toString()} from topic: $topic")
@@ -33,19 +40,17 @@ class MqttWrapper {
             }
         })
         val options = MqttConnectOptions()
-        try {
-            mqttClient.connect(options, null, object : IMqttActionListener {
-                override fun onSuccess(asyncActionToken: IMqttToken?) {
-                    Log.d(TAG, "Connection success")
-                }
+        mqttClient.connect(options, null, object : IMqttActionListener {
+            override fun onSuccess(asyncActionToken: IMqttToken?) {
+                isConnected = true
+                onConnect(this@MqttWrapper)
+                Log.d(TAG, "Connection success")
+            }
 
-                override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
-                    Log.d(TAG, "Connection failure")
-                }
-            })
-        } catch (e: MqttException) {
-            e.printStackTrace()
-        }
+            override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+                Log.d(TAG, "Connection failure")
+            }
+        })
 
     }
 
@@ -65,7 +70,12 @@ class MqttWrapper {
         }
     }
 
-    fun subscribe(topic: String, qos: Int = 1, onMessage: (String) -> Unit) {
+    fun subscribe(
+        topic: String,
+        qos: Int = 1,
+        onMessage: (String) -> Unit,
+        onSubscribe: () -> Unit,
+    ) {
         channelMap[topic] = onMessage
         try {
             mqttClient.subscribe(topic, qos, null, object : IMqttActionListener {

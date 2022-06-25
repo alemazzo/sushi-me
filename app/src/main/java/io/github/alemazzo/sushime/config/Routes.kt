@@ -6,6 +6,8 @@ import io.github.alemazzo.sushime.navigation.routing.Route
 import io.github.alemazzo.sushime.ui.screens.creation.CreationScreen
 import io.github.alemazzo.sushime.ui.screens.infoget.InfoGetScreen
 import io.github.alemazzo.sushime.ui.screens.join.JoinScreen
+import io.github.alemazzo.sushime.ui.screens.order_cart.OrderCartScreen
+import io.github.alemazzo.sushime.ui.screens.order_menu.OrderMenuScreen
 import io.github.alemazzo.sushime.ui.screens.orders.OrdersScreen
 import io.github.alemazzo.sushime.ui.screens.restaurant_info.RestaurantInfoScreen
 import io.github.alemazzo.sushime.ui.screens.restaurants.RestaurantsScreen
@@ -82,6 +84,37 @@ object Routes {
         }
     }
 
+    // Order route
+    private const val orderMenuRouteArgName = "order-id"
+
+    object OrderMenuRoute : Route(
+        path = "order-menu/{$orderMenuRouteArgName}",
+        arguments = listOf(orderMenuRouteArgName),
+        screen = OrderMenuScreen
+    ) {
+        val orderMenuOrderIdArgName = orderMenuRouteArgName
+        fun navigate(navigator: NavHostController, tableId: String) {
+            navigate(
+                navigator = navigator,
+                arguments = mapOf(orderMenuOrderIdArgName to tableId)
+            )
+        }
+    }
+
+    object OrderCartRoute : Route(
+        path = "order-cart/{$orderMenuRouteArgName}",
+        arguments = listOf(orderMenuRouteArgName),
+        screen = OrderCartScreen
+    ) {
+        val orderMenuOrderIdArgName = orderMenuRouteArgName
+        fun navigate(navigator: NavHostController, tableId: String) {
+            navigate(
+                navigator = navigator,
+                arguments = mapOf(orderMenuOrderIdArgName to tableId)
+            )
+        }
+    }
+
 
     fun all(): List<Route> = listOf(
 
@@ -99,6 +132,10 @@ object Routes {
         RestaurantInfoRoute,
 
         // Table
-        CreationRoute
+        CreationRoute,
+
+        // Order
+        OrderMenuRoute,
+        OrderCartRoute
     )
 }

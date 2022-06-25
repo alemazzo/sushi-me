@@ -1,6 +1,7 @@
 package io.github.alemazzo.sushime.ui.screens.restaurant_info.components
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -42,7 +43,7 @@ fun RestaurantInfoScreenContent(
             selectedDish = null
         }
     }
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(
@@ -54,9 +55,15 @@ fun RestaurantInfoScreenContent(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        RestaurantInfoCard(ristorante = restaurant)
-        RestaurantInfoMenuRow(restaurantInfoViewModel) { selectedDish = it }
-        CreateTableButton(navigator = navController, restaurant = restaurant)
+        item {
+            RestaurantInfoCard(ristorante = restaurant)
+        }
+        item {
+            RestaurantInfoMenuRow(restaurantInfoViewModel) { selectedDish = it }
+        }
+        item {
+            CreateTableButton(navigator = navController, restaurant = restaurant)
+        }
     }
 }
 
@@ -126,49 +133,56 @@ fun RestaurantInfoMenuRow(
     onDishClick: (Piatto) -> Unit,
 ) {
 
-    val dishes by restaurantInfoViewModel.dishesRepository.getAll().observeAsState()
+    val categoriesWithDishes by restaurantInfoViewModel.categoriesRepository.getAllCategoriesWithDishes()
+        .observeAsState()
 
     Card(
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(6.dp),
-
-        ) {
+    ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            modifier = Modifier.padding(top = 10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TextTitleMedium(name = "I Nostri Piatti")
-            LazyRow(
-                verticalAlignment = Alignment.Top,
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            TextTitleLarge(name = "I nostri piatti")
+            LazyColumn(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(16.dp)
+                    .height(350.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                dishes?.let {
-                    items(it, itemContent = { dish ->
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
+                categoriesWithDishes?.let {
+                    items(it) { categoryWithDishes ->
+                        TextTitleMedium(name = categoryWithDishes.categoria.nome)
+                        LazyRow(
+                            verticalAlignment = Alignment.Top,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
                         ) {
-                            CircleShapeImage(
-                                painter = rememberAsyncImagePainter("https://raw.githubusercontent.com/zucchero-sintattico/sushi-me/main/db/img/${dish.id}.jpg"),
-                                size = 100.dp,
-                                onClick = {
-                                    onDishClick(dish)
+                            items(categoryWithDishes.piatti) { dish ->
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    CircleShapeImage(
+                                        painter = rememberAsyncImagePainter("https://raw.githubusercontent.com/zucchero-sintattico/sushi-me/main/db/img/${dish.id}.jpg"),
+                                        size = 100.dp,
+                                        onClick = {
+                                            onDishClick(dish)
+                                        }
+                                    )
+                                    TextBodyMediumWithMaximumWidth(description = dish.name,
+                                        maxWidth = 100.dp)
                                 }
-                            )
-                            TextBodyMediumWithMaximumWidth(description = dish.name,
-                                maxWidth = 100.dp)
+                            }
                         }
-                    })
+                    }
                 }
-
-
             }
         }
-
     }
 }
 
@@ -185,7 +199,6 @@ fun RestaurantInfoCard(ristorante: Ristorante) {
                 .fillMaxWidth()
                 .padding(16.dp)
                 .height(IntrinsicSize.Min)
-
         ) {
             WeightedColumnCenteredHorizontally(2f) {
                 CircleShapeImage(
