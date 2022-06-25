@@ -59,6 +59,7 @@ object CreationScreen : Screen() {
         }
         LaunchedEffect(key1 = true) {
             code = getRandomString(5)
+            orderViewModel.tableId = code
             orderViewModel.createMqttInstance { mqtt ->
                 mqtt.connect { _ ->
                     mqtt.joinAsCreator(

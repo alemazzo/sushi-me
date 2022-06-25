@@ -39,8 +39,9 @@ object BottomBars {
             BottomBarItemInfo(
                 route = Routes.OrderMenuRoute,
                 imageVector = Icons.Filled.Menu,
-                title = "Menu"
-            ),
+                title = "Menu",
+
+                ),
             BottomBarItemInfo(
                 route = Routes.OrderCartRoute,
                 imageVector = Icons.Filled.ShoppingCart,

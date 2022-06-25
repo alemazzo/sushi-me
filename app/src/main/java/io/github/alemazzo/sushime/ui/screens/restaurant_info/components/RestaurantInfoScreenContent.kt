@@ -141,13 +141,16 @@ fun RestaurantInfoMenuRow(
         elevation = CardDefaults.cardElevation(6.dp),
     ) {
         Column(
-            modifier = Modifier.padding(top = 10.dp),
+            modifier = Modifier
+                .padding(top = 10.dp)
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TextTitleLarge(name = "I nostri piatti")
             LazyColumn(
                 modifier = Modifier
                     .padding(16.dp)
+                    .fillMaxWidth()
                     .height(350.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)

@@ -72,6 +72,8 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
     val users = mutableListOf<String>()
     val orders = mutableListOf<SingleOrder>()
 
+    var tableId: String? = null
+
     fun createMqttInstance(onCreated: (SushimeMqtt) -> Unit = {}) {
         if (sushimeMqtt != null) {
             onCreated(sushimeMqtt!!)
@@ -82,10 +84,5 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
             onCreated(sushimeMqtt!!)
         }
     }
-
-    init {
-
-    }
-
 
 }
