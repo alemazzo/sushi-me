@@ -5,8 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,12 +19,10 @@ import io.github.alemazzo.sushime.model.database.ristorante.Ristorante
 import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.ui.screens.creation.viewmodel.CreationViewModel
 import io.github.alemazzo.sushime.ui.screens.order_menu.OrderViewModel
+import io.github.alemazzo.sushime.ui.screens.order_menu.SingleOrder
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.CircleShapeImage
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextTitleLarge
-import io.github.alemazzo.sushime.utils.WeightedColumnCentered
-import io.github.alemazzo.sushime.utils.WeightedColumnCenteredHorizontally
-import io.github.alemazzo.sushime.utils.getRandomString
-import io.github.alemazzo.sushime.utils.getViewModel
+import io.github.alemazzo.sushime.utils.*
 import io.github.alemazzo.sushime.utils.qr.getQrCodeBitmap
 
 @ExperimentalMaterial3Api
@@ -52,14 +49,45 @@ object CreationScreen : Screen() {
 
 
         val orderViewModel: OrderViewModel = getViewModel()
-        val mqtt = orderViewModel.sushimeMqtt
 
-        mqtt.connect {
+        var ready by remember {
+            mutableStateOf(false)
+        }
 
+        var code: String? by remember {
+            mutableStateOf(null)
         }
-        ristorante?.let {
-            CreationScreenContent(navigator, paddingValues, creationViewModel, it, orderViewModel)
+        LaunchedEffect(key1 = true) {
+            code = getRandomString(5)
+            orderViewModel.createMqttInstance { mqtt ->
+                mqtt.connect { _ ->
+                    mqtt.joinAsCreator(
+                        tableId = code!!,
+                        onNewUser = { orderViewModel.users.add(it) },
+                        onNewOrderSent = { orderViewModel.orders.add(SingleOrder.fromString(it)) }
+                    ) {
+                        ready = true
+                    }
+                }
+            }
         }
+
+
+
+        if (!ready) CenteredColumn(modifier = Modifier.padding(paddingValues)) {
+            CircularProgressIndicator()
+        }
+        else {
+            ristorante?.let {
+                CreationScreenContent(navigator,
+                    paddingValues,
+                    creationViewModel,
+                    it,
+                    orderViewModel,
+                    code!!)
+            }
+        }
+
     }
 }
 
@@ -72,8 +100,8 @@ fun CreationScreenContent(
     creationViewModel: CreationViewModel,
     restaurant: Ristorante,
     orderViewModel: OrderViewModel,
+    code: String,
 ) {
-    val code = getRandomString(5)
     val qrImage = getQrCodeBitmap(code)
     Column(
         modifier = Modifier

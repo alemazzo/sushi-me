@@ -28,14 +28,19 @@ object OrderMenuScreen : Screen() {
         val tableId =
             arguments?.getString(Routes.OrderMenuRoute.orderMenuOrderIdArgName)!!
         val orderViewModel: OrderViewModel = getViewModel()
-        val mqtt = orderViewModel.sushimeMqtt
         var isConnected by remember { mutableStateOf(false) }
 
-        mqtt.connect {
-            it.join(tableId) {
-                isConnected = true
+        LaunchedEffect(key1 = true) {
+            orderViewModel.createMqttInstance { mqtt ->
+                mqtt.connect {
+                    mqtt.join(tableId) {
+                        isConnected = true
+                    }
+                }
             }
         }
+
+
 
         if (!isConnected) LoadingScreen(paddingValues)
         else OrderMenuContent(

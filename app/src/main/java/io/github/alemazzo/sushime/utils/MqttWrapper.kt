@@ -80,6 +80,7 @@ class MqttWrapper(context: Context) {
         try {
             mqttClient.subscribe(topic, qos, null, object : IMqttActionListener {
                 override fun onSuccess(asyncActionToken: IMqttToken?) {
+                    onSubscribe()
                     Log.d(TAG, "Subscribed to $topic")
                 }
 
@@ -108,7 +109,13 @@ class MqttWrapper(context: Context) {
         }
     }
 
-    fun publish(topic: String, msg: String, qos: Int = 1, retained: Boolean = false) {
+    fun publish(
+        topic: String,
+        msg: String,
+        qos: Int = 1,
+        retained: Boolean = false,
+        onPublish: () -> Unit,
+    ) {
         try {
             val message = MqttMessage()
             message.payload = msg.toByteArray()
@@ -116,6 +123,7 @@ class MqttWrapper(context: Context) {
             message.isRetained = retained
             mqttClient.publish(topic, message, null, object : IMqttActionListener {
                 override fun onSuccess(asyncActionToken: IMqttToken?) {
+                    onPublish()
                     Log.d(TAG, "$msg published to $topic")
                 }
 

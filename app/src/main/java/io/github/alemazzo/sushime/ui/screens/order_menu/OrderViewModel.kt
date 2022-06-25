@@ -14,39 +14,78 @@ import kotlinx.coroutines.flow.first
 class SushimeMqtt(application: Application, private val userId: String) {
 
     private val mqttWrapper: MqttWrapper = MqttWrapper(application)
-    fun connect(onConnect: (SushimeMqtt) -> Unit) {
+    private var tableId: String? = null
+
+    fun connect(onConnect: (SushimeMqtt) -> Unit = {}) {
         mqttWrapper.connect { onConnect(this) }
     }
 
-    fun join(tableId: String, onJoin: (SushimeMqtt) -> Unit) {
-        mqttWrapper.publish("$tableId/newUser", userId)
+    fun joinAsCreator(
+        tableId: String,
+        onNewOrderSent: (String) -> Unit,
+        onNewUser: (String) -> Unit,
+        onJoin: (SushimeMqtt) -> Unit = {},
+    ) {
+        this.tableId = tableId
+        mqttWrapper.subscribe("$tableId/newUser", onMessage = onNewUser) {
+            onJoin(this)
+        }
+        mqttWrapper.subscribe(tableId, onMessage = onNewOrderSent) {
+            onJoin(this)
+        }
     }
 
-    fun makeOrder(order: String, onMake: (SushimeMqtt) -> Unit) {
+    fun join(tableId: String, onJoin: (SushimeMqtt) -> Unit = {}) {
+        this.tableId = tableId
+        mqttWrapper.publish("$tableId/newUser", userId) {
+            onJoin(this)
+        }
+    }
 
+    fun makeOrder(order: String, onMake: (SushimeMqtt) -> Unit = {}) {
+        mqttWrapper.publish("$tableId/menu", order) {
+            onMake(this)
+        }
     }
 }
 
 data class SingleOrderItem(val dishId: Int, val quantity: Int)
-data class SingleOrder(val items: List<SingleOrderItem>)
+data class SingleOrder(val items: List<SingleOrderItem>) {
+
+    companion object {
+        fun fromString(string: String): SingleOrder {
+            return SingleOrder(listOf())
+        }
+    }
+}
 
 class OrderViewModel(application: Application) : AndroidViewModel(application) {
+    private val _application = application
     private val userDataStore = UserDataStore.getInstance(application)
     private val db = getDatabase()
-    lateinit var sushimeMqtt: SushimeMqtt
+    var sushimeMqtt: SushimeMqtt? = null
 
     val categoriesRepository = CategoriesRepository(db)
     val restaurantsRepository = RestaurantsRepository(db)
     val dishesRepository = DishesRepository(db)
 
+    val users = mutableListOf<String>()
     val orders = mutableListOf<SingleOrder>()
 
-    init {
-        userDataStore.getEmail().let {
-            launchWithIOContext {
-                sushimeMqtt = SushimeMqtt(application, it.first()!!)
-            }
+    fun createMqttInstance(onCreated: (SushimeMqtt) -> Unit = {}) {
+        if (sushimeMqtt != null) {
+            onCreated(sushimeMqtt!!)
+            return
+        }
+        launchWithIOContext {
+            sushimeMqtt = SushimeMqtt(_application, userDataStore.getEmail().first()!!)
+            onCreated(sushimeMqtt!!)
         }
     }
+
+    init {
+
+    }
+
 
 }
