@@ -102,7 +102,6 @@ fun OrderMenuContent(
     }
 
     CenteredColumn(modifier = Modifier.padding(paddingValues)) {
-
         Card(
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(6.dp),
@@ -129,7 +128,7 @@ fun OrderMenuContent(
                         ) {
                             items(categoryWithDishes.piatti) { dish ->
                                 var itemCount by remember {
-                                    mutableStateOf(0)
+                                    mutableStateOf(orderViewModel.getDishAmount(dish))
                                 }
                                 Card(
                                     modifier = Modifier
@@ -147,7 +146,10 @@ fun OrderMenuContent(
                                             verticalAlignment = Alignment.CenterVertically,
                                             horizontalArrangement = Arrangement.SpaceBetween
                                         ) {
-                                            IconButton(onClick = { itemCount-- },
+                                            IconButton(onClick = {
+                                                itemCount--
+                                                orderViewModel.decreaseDishFromOrder(dish)
+                                            },
                                                 enabled = itemCount != 0) {
                                                 Icon(imageVector = Icons.Filled.Remove,
                                                     contentDescription = "Remove")
@@ -156,7 +158,12 @@ fun OrderMenuContent(
                                             TextBodyMedium(description = itemCount.toString())
 
 
-                                            IconButton(onClick = { itemCount++ }) {
+                                            IconButton(
+                                                onClick = {
+                                                    itemCount++
+                                                    orderViewModel.increaseDishToOrder(dish)
+                                                }
+                                            ) {
                                                 Icon(imageVector = Icons.Filled.Add,
                                                     contentDescription = "Add")
                                             }

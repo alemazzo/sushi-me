@@ -34,6 +34,7 @@ fun RestaurantInfoScreenContent(
     restaurantInfoViewModel: RestaurantInfoViewModel,
     restaurant: Ristorante,
 ) {
+
     var selectedDish: Piatto? by remember {
         mutableStateOf(null)
     }

@@ -2,6 +2,7 @@ package io.github.alemazzo.sushime.ui.screens.order_menu
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import io.github.alemazzo.sushime.model.database.piatto.Piatto
 import io.github.alemazzo.sushime.model.repositories.categories.CategoriesRepository
 import io.github.alemazzo.sushime.model.repositories.dishes.DishesRepository
 import io.github.alemazzo.sushime.model.repositories.restaurants.RestaurantsRepository
@@ -49,7 +50,7 @@ class SushimeMqtt(application: Application, private val userId: String) {
     }
 }
 
-data class SingleOrderItem(val dishId: Int, val quantity: Int)
+data class SingleOrderItem(val dishId: Int, var quantity: Int)
 data class SingleOrder(val items: List<SingleOrderItem>) {
 
     companion object {
@@ -72,7 +73,26 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
     val users = mutableListOf<String>()
     val orders = mutableListOf<SingleOrder>()
 
+    val order = mutableMapOf<Int, SingleOrderItem>()
+
     var tableId: String? = null
+
+
+    fun getDishAmount(dish: Piatto): Int {
+        return order[dish.id]?.quantity ?: 0
+    }
+
+    fun decreaseDishFromOrder(dish: Piatto) {
+        order[dish.id]!!.quantity--
+    }
+
+    fun increaseDishToOrder(dish: Piatto) {
+        if (order.containsKey(dish.id)) {
+            order[dish.id]!!.quantity++
+        } else {
+            order[dish.id] = SingleOrderItem(dish.id, 1)
+        }
+    }
 
     fun createMqttInstance(onCreated: (SushimeMqtt) -> Unit = {}) {
         if (sushimeMqtt != null) {
