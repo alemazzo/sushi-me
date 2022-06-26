@@ -1,9 +1,10 @@
-package io.github.alemazzo.sushime.utils
+package io.github.alemazzo.sushime.utils.mqtt
 
 import android.content.Context
 import android.util.Log
 import info.mqtt.android.service.Ack
 import info.mqtt.android.service.MqttAndroidClient
+import io.github.alemazzo.sushime.utils.getRandomString
 import org.eclipse.paho.client.mqttv3.*
 
 class MqttWrapper(context: Context) {
@@ -14,9 +15,23 @@ class MqttWrapper(context: Context) {
 
     private val serverURI = "tcp://broker.emqx.io:1883"
     private val mqttClient: MqttAndroidClient =
-        MqttAndroidClient(context, serverURI, "kotlin_client", Ack.AUTO_ACK)
+        MqttAndroidClient(context, serverURI, getRandomString(10), Ack.AUTO_ACK)
     private var channelMap = mutableMapOf<String, (String) -> Unit>()
     var isConnected = false
+
+    fun reconnect(onReconnect: () -> Unit) {
+        mqttClient.connect(MqttConnectOptions(), null, object : IMqttActionListener {
+            override fun onSuccess(asyncActionToken: IMqttToken?) {
+                Log.d(TAG, "Connection success")
+                onReconnect()
+            }
+
+            override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+                Log.d(TAG, "Connection failure")
+                reconnect { onReconnect() }
+            }
+        })
+    }
 
     fun connect(onConnect: (MqttWrapper) -> Unit) {
         if (isConnected) {
@@ -34,6 +49,12 @@ class MqttWrapper(context: Context) {
 
             override fun connectionLost(cause: Throwable?) {
                 Log.d(TAG, "Connection lost ${cause.toString()}")
+                /*
+                this@MqttWrapper.reconnect {
+
+                    onConnect(this@MqttWrapper)
+                }
+                 */
             }
 
             override fun deliveryComplete(token: IMqttDeliveryToken?) {

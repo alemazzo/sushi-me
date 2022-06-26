@@ -20,11 +20,12 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import io.github.alemazzo.sushime.config.BottomBars
 import io.github.alemazzo.sushime.config.Routes
+import io.github.alemazzo.sushime.model.orders.SingleOrderItem
 import io.github.alemazzo.sushime.navigation.routing.Route
 import io.github.alemazzo.sushime.navigation.screen.Screen
-import io.github.alemazzo.sushime.ui.screens.order_menu.OrderViewModel
 import io.github.alemazzo.sushime.ui.screens.order_menu.ShowParticipants
-import io.github.alemazzo.sushime.ui.screens.order_menu.SingleOrderItem
+import io.github.alemazzo.sushime.ui.screens.order_menu.ShowQRInfo
+import io.github.alemazzo.sushime.ui.screens.order_menu.viewmodel.OrderViewModel
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.CircleShapeImage
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextBodyLarge
 import io.github.alemazzo.sushime.utils.WeightedColumnCenteredHorizontally
@@ -39,14 +40,17 @@ object OrderCartScreen : Screen() {
 
     @Composable
     override fun TopBar() {
+        val orderViewModel: OrderViewModel = getViewModel()
         CenterAlignedTopAppBar(
             title = { Text("Cart") },
             actions = {
-                IconButton(onClick = { showParticipants = true }) {
-                    Icon(
-                        imageVector = Icons.Filled.People,
-                        contentDescription = "Users"
-                    )
+                if (orderViewModel.isCreator) {
+                    IconButton(onClick = { showParticipants = true }) {
+                        Icon(
+                            imageVector = Icons.Filled.People,
+                            contentDescription = "Users"
+                        )
+                    }
                 }
                 IconButton(onClick = { showQR = true }) {
                     Icon(
@@ -78,8 +82,13 @@ object OrderCartScreen : Screen() {
         ShowParticipants(showPopup = showParticipants) {
             showParticipants = false
         }
+        ShowQRInfo(showPopup = showQR) {
+            showQR = false
+        }
         LazyColumn(
-            modifier = Modifier.padding(paddingValues),
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             items(order.values.toList()) { item: SingleOrderItem ->
@@ -89,7 +98,11 @@ object OrderCartScreen : Screen() {
             item {
                 Button(onClick = {
                     orderViewModel.makeOrder {
-
+                        if (orderViewModel.isCreator) {
+                            Routes.OrderResumeRoute.navigate(navigator, orderViewModel.tableId!!)
+                        } else {
+                            Routes.OrdersRoute.navigate(navigator)
+                        }
                     }
                 }) {
                     TextBodyLarge(description = "Confirm Order")
@@ -141,6 +154,7 @@ fun OrderItemCard(item: SingleOrderItem) {
                     }
                     TextBodyLarge(description = itemCount.toString())
                     IconButton(
+                        enabled = itemCount > 0,
                         onClick = {
                             itemCount--
                             orderViewModel.decreaseDishFromOrder(dish!!)

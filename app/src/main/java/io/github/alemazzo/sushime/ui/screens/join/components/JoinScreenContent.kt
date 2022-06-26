@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import io.github.alemazzo.sushime.config.Routes
 import io.github.alemazzo.sushime.ui.screens.creation.ShowCircularProgressIndicator
-import io.github.alemazzo.sushime.ui.screens.order_menu.OrderViewModel
+import io.github.alemazzo.sushime.ui.screens.order_menu.viewmodel.OrderViewModel
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextBodyLarge
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextTitleLarge
 import io.github.alemazzo.sushime.utils.getViewModel

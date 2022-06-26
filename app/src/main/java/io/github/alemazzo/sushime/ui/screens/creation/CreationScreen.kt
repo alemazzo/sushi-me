@@ -18,7 +18,7 @@ import io.github.alemazzo.sushime.config.Routes
 import io.github.alemazzo.sushime.model.database.restaurants.Restaurant
 import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.ui.screens.creation.viewmodel.CreationViewModel
-import io.github.alemazzo.sushime.ui.screens.order_menu.OrderViewModel
+import io.github.alemazzo.sushime.ui.screens.order_menu.viewmodel.OrderViewModel
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.CircleShapeImage
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextTitleLarge
 import io.github.alemazzo.sushime.utils.*

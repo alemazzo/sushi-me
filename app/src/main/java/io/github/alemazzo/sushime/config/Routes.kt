@@ -8,6 +8,7 @@ import io.github.alemazzo.sushime.ui.screens.infoget.InfoGetScreen
 import io.github.alemazzo.sushime.ui.screens.join.JoinScreen
 import io.github.alemazzo.sushime.ui.screens.order_cart.OrderCartScreen
 import io.github.alemazzo.sushime.ui.screens.order_menu.OrderMenuScreen
+import io.github.alemazzo.sushime.ui.screens.order_resume.OrderResumeScreen
 import io.github.alemazzo.sushime.ui.screens.orders.OrdersScreen
 import io.github.alemazzo.sushime.ui.screens.restaurant_info.RestaurantInfoScreen
 import io.github.alemazzo.sushime.ui.screens.restaurants.RestaurantsScreen
@@ -115,6 +116,19 @@ object Routes {
         }
     }
 
+    object OrderResumeRoute : Route(
+        path = "order-resume/{$orderMenuRouteArgName}",
+        arguments = listOf(orderMenuRouteArgName),
+        screen = OrderResumeScreen
+    ) {
+        val orderMenuOrderIdArgName = orderMenuRouteArgName
+        fun navigate(navigator: NavHostController, tableId: String) {
+            navigate(
+                navigator = navigator,
+                arguments = mapOf(orderMenuOrderIdArgName to tableId)
+            )
+        }
+    }
 
     fun all(): List<Route> = listOf(
 
@@ -136,6 +150,7 @@ object Routes {
 
         // Order
         OrderMenuRoute,
-        OrderCartRoute
+        OrderCartRoute,
+        OrderResumeRoute
     )
 }

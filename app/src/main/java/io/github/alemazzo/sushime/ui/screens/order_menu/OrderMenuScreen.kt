@@ -30,6 +30,7 @@ import io.github.alemazzo.sushime.config.Routes
 import io.github.alemazzo.sushime.model.database.dishes.Dish
 import io.github.alemazzo.sushime.navigation.routing.Route
 import io.github.alemazzo.sushime.navigation.screen.Screen
+import io.github.alemazzo.sushime.ui.screens.order_menu.viewmodel.OrderViewModel
 import io.github.alemazzo.sushime.ui.screens.restaurant_info.components.ShowDishInfo
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.*
 import io.github.alemazzo.sushime.utils.CenteredColumn
@@ -45,14 +46,17 @@ object OrderMenuScreen : Screen() {
 
     @Composable
     override fun TopBar() {
+        val orderViewModel: OrderViewModel = getViewModel()
         CenterAlignedTopAppBar(
             title = { Text("Menu") },
             actions = {
-                IconButton(onClick = { showParticipants = true }) {
-                    Icon(
-                        imageVector = Icons.Filled.People,
-                        contentDescription = "Users"
-                    )
+                if (orderViewModel.isCreator) {
+                    IconButton(onClick = { showParticipants = true }) {
+                        Icon(
+                            imageVector = Icons.Filled.People,
+                            contentDescription = "Users"
+                        )
+                    }
                 }
                 IconButton(onClick = { showQR = true }) {
                     Icon(
@@ -176,7 +180,7 @@ fun ShowParticipants(
                         style = MaterialTheme.typography.titleLarge,
                         color = Color.Black)
                     LazyColumn {
-                        items(orderViewModel.users) { user ->
+                        items(orderViewModel.users.toList()) { user ->
                             TextBodyLarge(description = user)
                         }
                     }
