@@ -19,7 +19,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
@@ -139,10 +138,11 @@ fun ShowQRInfo(showPopup: Boolean, onEnd: () -> Unit) {
                         .clip(RoundedCornerShape(16.dp))
                         .width(350.dp)
                         .height(400.dp)
-                        .background(MaterialTheme.colorScheme.primary),
+                        .background(MaterialTheme.colorScheme.background),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceEvenly
                 ) {
+                    TextTitleLarge(name = "Table Information")
                     Image(
                         bitmap = qrImage.asImageBitmap(),
                         contentDescription = "QRCode",
@@ -180,13 +180,13 @@ fun ShowParticipants(
                         .clip(RoundedCornerShape(16.dp))
                         .width(350.dp)
                         .height(400.dp)
-                        .background(MaterialTheme.colorScheme.primary),
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceEvenly
+                    verticalArrangement = Arrangement.spacedBy(32.dp)
                 ) {
                     Text(text = "Participants",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = Color.Black)
+                        style = MaterialTheme.typography.titleLarge)
                     LazyColumn {
                         items(orderViewModel.users.toList()) { user ->
                             TextBodyLarge(description = user)

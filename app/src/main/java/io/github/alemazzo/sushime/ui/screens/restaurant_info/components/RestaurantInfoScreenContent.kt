@@ -49,7 +49,7 @@ fun RestaurantInfoScreenContent(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.colorScheme.primaryContainer)
             .padding(
                 top = paddingValues.calculateTopPadding() + 8.dp,
                 bottom = paddingValues.calculateBottomPadding() + 8.dp,
@@ -142,8 +142,8 @@ fun LazyListScope.RestaurantInfoMenuRow(
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(6.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.onBackground,
-                    contentColor = contentColorFor(MaterialTheme.colorScheme.onBackground)
+                    containerColor = MaterialTheme.colorScheme.background,
+                    contentColor = MaterialTheme.colorScheme.onBackground
                 )
             ) {
                 Column(
@@ -190,8 +190,8 @@ fun RestaurantInfoCard(ristorante: Restaurant) {
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(6.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.onBackground,
-            contentColor = contentColorFor(MaterialTheme.colorScheme.onBackground)
+            containerColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.onBackground
         )
     ) {
         Row(

@@ -2,7 +2,6 @@ package io.github.alemazzo.sushime.navigation.screen.bottombar
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import io.github.alemazzo.sushime.navigation.routing.Route
 
@@ -30,11 +29,9 @@ open class BottomBar(val items: List<BottomBarItemInfo>) {
                         )
                     },
                     colors = NavigationBarItemDefaults.colors(
-                        unselectedIconColor = contentColorFor(MaterialTheme.colorScheme.primary),
-                        unselectedTextColor = contentColorFor(MaterialTheme.colorScheme.primary),
-                        indicatorColor = Color.White,
-                        selectedIconColor = contentColorFor(Color.White),
-                        selectedTextColor = contentColorFor(MaterialTheme.colorScheme.primary)
+                        unselectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                        unselectedTextColor = MaterialTheme.colorScheme.onPrimary,
+                        selectedTextColor = MaterialTheme.colorScheme.onPrimary
                     )
                 )
             }

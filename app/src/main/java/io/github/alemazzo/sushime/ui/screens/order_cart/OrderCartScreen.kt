@@ -12,8 +12,11 @@ import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -148,9 +151,6 @@ fun OrderItemCard(item: SingleOrderItem) {
     val dish by orderViewModel.dishesRepository.getById(item.dishId).observeAsState()
 
     dish?.let {
-        var itemCount by remember {
-            mutableStateOf(orderViewModel.getDishAmount(dish!!))
-        }
         Card(
             modifier = Modifier.padding(16.dp),
             shape = RoundedCornerShape(16.dp),
@@ -176,18 +176,16 @@ fun OrderItemCard(item: SingleOrderItem) {
                 WeightedColumnCenteredHorizontally(1f) {
                     IconButton(
                         onClick = {
-                            itemCount++
                             orderViewModel.increaseDishToOrder(dish!!)
                         }
                     ) {
                         Icon(imageVector = Icons.Filled.Add,
                             contentDescription = "Add")
                     }
-                    TextBodyLarge(description = itemCount.toString())
+                    TextBodyLarge(description = item.quantity.toString())
                     IconButton(
-                        enabled = itemCount > 0,
+                        enabled = item.quantity > 0,
                         onClick = {
-                            itemCount--
                             orderViewModel.decreaseDishFromOrder(dish!!)
                         }
                     ) {

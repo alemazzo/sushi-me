@@ -1,6 +1,5 @@
 package io.github.alemazzo.sushime.ui.screens.settings.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -28,8 +27,10 @@ fun UserAccountCard(settingsViewModel: SettingsViewModel = getViewModel()) {
     Card(
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(6.dp),
-        modifier = Modifier
-            .clickable { },
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.onBackground
+        )
     ) {
         Row(
             modifier = Modifier
