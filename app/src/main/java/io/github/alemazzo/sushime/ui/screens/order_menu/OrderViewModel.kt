@@ -13,13 +13,33 @@ import io.github.alemazzo.sushime.utils.launchWithIOContext
 import io.github.alemazzo.sushime.utils.launchWithMainContext
 import kotlinx.coroutines.flow.first
 
-class SushimeMqtt(application: Application, private val userId: String) {
+class SushimeMqtt(private val application: Application, private val userId: String) {
 
-    private val mqttWrapper: MqttWrapper = MqttWrapper(application)
+    private var mqttWrapper: MqttWrapper = MqttWrapper(application)
     private var tableId: String? = null
 
     fun connect(onConnect: (SushimeMqtt) -> Unit = {}) {
         mqttWrapper.connect { onConnect(this) }
+    }
+
+    private fun _joinAsCreator(
+        tableId: String,
+        onNewOrderSent: (String) -> Unit,
+        onNewUser: (String) -> Unit,
+        onJoin: (SushimeMqtt) -> Unit = {},
+    ) {
+        mqttWrapper.connect {
+            this.tableId = tableId
+            mqttWrapper.subscribe("$tableId/newUser", onMessage = onNewUser) {
+                mqttWrapper.subscribe(tableId, onMessage = onNewOrderSent) {
+                    mqttWrapper.publish("$tableId/newUser", userId) {
+                        onJoin(this)
+                    }
+                }
+            }
+
+        }
+
     }
 
     fun joinAsCreator(
@@ -28,19 +48,31 @@ class SushimeMqtt(application: Application, private val userId: String) {
         onNewUser: (String) -> Unit,
         onJoin: (SushimeMqtt) -> Unit = {},
     ) {
-        this.tableId = tableId
-        mqttWrapper.subscribe("$tableId/newUser", onMessage = onNewUser) {
-            onJoin(this)
+        if (mqttWrapper.isConnected) {
+            mqttWrapper.disconnect {
+                this._joinAsCreator(tableId, onNewOrderSent, onNewUser, onJoin)
+            }
+        } else {
+            this._joinAsCreator(tableId, onNewOrderSent, onNewUser, onJoin)
         }
-        mqttWrapper.subscribe(tableId, onMessage = onNewOrderSent) {
-            onJoin(this)
+    }
+
+    private fun _join(tableId: String, onJoin: (SushimeMqtt) -> Unit = {}) {
+        mqttWrapper.connect {
+            this.tableId = tableId
+            mqttWrapper.publish("$tableId/newUser", userId) {
+                onJoin(this)
+            }
         }
     }
 
     fun join(tableId: String, onJoin: (SushimeMqtt) -> Unit = {}) {
-        this.tableId = tableId
-        mqttWrapper.publish("$tableId/newUser", userId) {
-            onJoin(this)
+        if (mqttWrapper.isConnected) {
+            mqttWrapper.disconnect {
+                this._join(tableId, onJoin)
+            }
+        } else {
+            this._join(tableId, onJoin)
         }
     }
 
@@ -99,7 +131,6 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun createTable(tableId: String, onCreated: () -> Unit = {}) {
-        if (sushimeMqtt != null) return
         this.tableId = tableId
         launchWithIOContext {
             sushimeMqtt = SushimeMqtt(_application, userDataStore.getEmail().first()!!)
@@ -116,7 +147,6 @@ class OrderViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun joinTable(tableId: String, onJoin: () -> Unit = {}) {
-        if (sushimeMqtt != null) return
         this.tableId = tableId
         launchWithIOContext {
             sushimeMqtt = SushimeMqtt(_application, userDataStore.getEmail().first()!!)

@@ -10,8 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import io.github.alemazzo.sushime.config.Routes
+import io.github.alemazzo.sushime.ui.screens.creation.ShowCircularProgressIndicator
 import io.github.alemazzo.sushime.ui.screens.order_menu.OrderViewModel
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextBodyLarge
+import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextTitleLarge
 import io.github.alemazzo.sushime.utils.getViewModel
 import io.github.alemazzo.sushime.utils.qr.*
 
@@ -20,6 +22,25 @@ import io.github.alemazzo.sushime.utils.qr.*
 fun JoinScreenContent(
     navController: NavHostController,
     paddingValues: PaddingValues,
+    useCamera: Boolean,
+) {
+    var loading by remember {
+        mutableStateOf(false)
+    }
+
+    when {
+        loading -> ShowCircularProgressIndicator(paddingValues = paddingValues)
+        else -> ShowNormalContent(navController, paddingValues, useCamera) { loading = true }
+    }
+}
+
+@ExperimentalMaterial3Api
+@Composable
+fun ShowNormalContent(
+    navController: NavHostController,
+    paddingValues: PaddingValues,
+    useCamera: Boolean,
+    onStartLoading: () -> Unit,
 ) {
     val orderViewModel: OrderViewModel = getViewModel()
     var code by remember {
@@ -30,29 +51,43 @@ fun JoinScreenContent(
             .fillMaxSize()
             .padding(paddingValues)
             .background(MaterialTheme.colorScheme.background),
-        verticalArrangement = Arrangement.SpaceEvenly,
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        QRScanner(onTextChange = {
-            Log.d("QRSCANNER", it)
-            if (isRestaurantQrCode(it)) {
-                Routes.RestaurantInfoRoute.navigate(navController,
-                    getRestaurantIdFromQrCode(it)!!)
-            } else if (isTableQrCode(it)) {
-                code = getTableIdFromQrCode(it)!!
-                //Routes.OrderMenuRoute.navigate(navController, tableId = tableId)
+        if (useCamera) {
+            TextTitleLarge(name = "Scan your table's QR Code")
+            Spacer(modifier = Modifier.height(16.dp))
+            QRScanner(onTextChange = {
+                Log.d("QRSCANNER", it)
+                when {
+                    isRestaurantQrCode(it) -> {
+                        Routes.RestaurantInfoRoute.navigate(navController,
+                            getRestaurantIdFromQrCode(it)!!)
+                    }
+                    isTableQrCode(it) -> {
+                        code = getTableIdFromQrCode(it)!!
+                        onStartLoading()
+                        orderViewModel.joinTable(code) {
+                            Routes.OrderMenuRoute.navigate(navController, code)
+                        }
+                    }
+                }
+            }, width = 300.dp, height = 300.dp)
+        } else {
+            TextTitleLarge(name = "Insert your table's code")
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(value = code,
+                onValueChange = { code = it },
+                label = { Text(text = "Table Code") })
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = {
+                onStartLoading()
+                orderViewModel.joinTable(code) {
+                    Routes.OrderMenuRoute.navigate(navController, code)
+                }
+            }) {
+                TextBodyLarge(description = "Join")
             }
-        }, width = 300.dp, height = 300.dp)
-        OutlinedTextField(value = code,
-            onValueChange = { code = it },
-            label = { Text(text = "Table Code") })
-
-        Button(onClick = {
-            orderViewModel.joinTable(code) {
-                Routes.OrderMenuRoute.navigate(navController, code)
-            }
-        }) {
-            TextBodyLarge(description = "Join")
         }
     }
 }

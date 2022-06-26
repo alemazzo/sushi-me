@@ -15,13 +15,14 @@ class MqttWrapper(context: Context) {
     private val serverURI = "tcp://broker.emqx.io:1883"
     private val mqttClient: MqttAndroidClient =
         MqttAndroidClient(context, serverURI, "kotlin_client", Ack.AUTO_ACK)
-    private val channelMap = mutableMapOf<String, (String) -> Unit>()
+    private var channelMap = mutableMapOf<String, (String) -> Unit>()
     var isConnected = false
 
     fun connect(onConnect: (MqttWrapper) -> Unit) {
-        if (mqttClient.isConnected) {
-            onConnect(this)
-            return
+        if (isConnected) {
+            isConnected = false
+            channelMap = mutableMapOf()
+            this.mqttClient.disconnect()
         }
         mqttClient.setCallback(object : MqttCallback {
             override fun messageArrived(topic: String?, message: MqttMessage?) {
@@ -54,11 +55,17 @@ class MqttWrapper(context: Context) {
 
     }
 
-    fun disconnect() {
+    fun disconnect(onDisconnect: () -> Unit) {
         try {
             mqttClient.disconnect(null, object : IMqttActionListener {
                 override fun onSuccess(asyncActionToken: IMqttToken?) {
                     Log.d(TAG, "Disconnected")
+                    this@MqttWrapper.isConnected = false
+                    channelMap.keys.forEach {
+                        this@MqttWrapper.unsubscribe(it)
+                    }
+                    channelMap = mutableMapOf()
+                    onDisconnect()
                 }
 
                 override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {

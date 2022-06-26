@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -22,6 +23,7 @@ import io.github.alemazzo.sushime.config.Routes
 import io.github.alemazzo.sushime.navigation.routing.Route
 import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.ui.screens.order_menu.OrderViewModel
+import io.github.alemazzo.sushime.ui.screens.order_menu.ShowParticipants
 import io.github.alemazzo.sushime.ui.screens.order_menu.SingleOrderItem
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.CircleShapeImage
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextBodyLarge
@@ -30,13 +32,27 @@ import io.github.alemazzo.sushime.utils.getViewModel
 
 @ExperimentalMaterial3Api
 object OrderCartScreen : Screen() {
+
+
+    var showParticipants by mutableStateOf(false)
+    var showQR by mutableStateOf(false)
+
     @Composable
     override fun TopBar() {
         CenterAlignedTopAppBar(
             title = { Text("Cart") },
             actions = {
-                IconButton(onClick = {}) {
-                    Icon(imageVector = Icons.Filled.People, contentDescription = "Users")
+                IconButton(onClick = { showParticipants = true }) {
+                    Icon(
+                        imageVector = Icons.Filled.People,
+                        contentDescription = "Users"
+                    )
+                }
+                IconButton(onClick = { showQR = true }) {
+                    Icon(
+                        imageVector = Icons.Filled.QrCodeScanner,
+                        contentDescription = "Show QR"
+                    )
                 }
             }
         )
@@ -59,10 +75,12 @@ object OrderCartScreen : Screen() {
         val orderViewModel: OrderViewModel = getViewModel()
         val order = orderViewModel.order
 
+        ShowParticipants(showPopup = showParticipants) {
+            showParticipants = false
+        }
         LazyColumn(
             modifier = Modifier.padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(order.values.toList()) { item: SingleOrderItem ->
                 OrderItemCard(item)

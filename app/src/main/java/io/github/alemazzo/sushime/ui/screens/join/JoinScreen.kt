@@ -2,10 +2,14 @@ package io.github.alemazzo.sushime.ui.screens.join
 
 import android.os.Bundle
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.filled.TextFields
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import io.github.alemazzo.sushime.config.BottomBars
 import io.github.alemazzo.sushime.config.Routes
@@ -18,10 +22,20 @@ import io.github.alemazzo.sushime.ui.screens.join.components.JoinScreenContent
 @ExperimentalMaterial3Api
 object JoinScreen : Screen() {
 
+    var useCamera by mutableStateOf(true)
+
     @Composable
     override fun TopBar() {
         CenterAlignedTopAppBar(
-            title = { Text("Join") }
+            title = { Text("Join") },
+            actions = {
+                IconButton(onClick = { useCamera = !useCamera }) {
+                    Icon(
+                        imageVector = if (useCamera) Icons.Filled.TextFields else Icons.Filled.QrCodeScanner,
+                        contentDescription = "Use Code"
+                    )
+                }
+            }
         )
     }
 
@@ -36,7 +50,7 @@ object JoinScreen : Screen() {
         paddingValues: PaddingValues,
         arguments: Bundle?,
     ) {
-        JoinScreenContent(navigator, paddingValues)
+        JoinScreenContent(navigator, paddingValues, useCamera)
     }
 }
 

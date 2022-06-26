@@ -1,6 +1,8 @@
 package io.github.alemazzo.sushime.ui.screens.order_menu
 
 import android.os.Bundle
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -9,13 +11,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import io.github.alemazzo.sushime.config.BottomBars
@@ -24,23 +31,34 @@ import io.github.alemazzo.sushime.model.database.dishes.Dish
 import io.github.alemazzo.sushime.navigation.routing.Route
 import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.ui.screens.restaurant_info.components.ShowDishInfo
-import io.github.alemazzo.sushime.ui.screens.restaurants.components.CircleShapeImage
-import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextBodyMedium
-import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextTitleLarge
-import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextTitleMedium
+import io.github.alemazzo.sushime.ui.screens.restaurants.components.*
 import io.github.alemazzo.sushime.utils.CenteredColumn
 import io.github.alemazzo.sushime.utils.getViewModel
+import io.github.alemazzo.sushime.utils.qr.getQrCodeBitmap
 
 
 @ExperimentalMaterial3Api
 object OrderMenuScreen : Screen() {
+
+    var showParticipants by mutableStateOf(false)
+    var showQR by mutableStateOf(false)
+
     @Composable
     override fun TopBar() {
         CenterAlignedTopAppBar(
             title = { Text("Menu") },
             actions = {
-                IconButton(onClick = {}) {
-                    Icon(imageVector = Icons.Filled.People, contentDescription = "Users")
+                IconButton(onClick = { showParticipants = true }) {
+                    Icon(
+                        imageVector = Icons.Filled.People,
+                        contentDescription = "Users"
+                    )
+                }
+                IconButton(onClick = { showQR = true }) {
+                    Icon(
+                        imageVector = Icons.Filled.QrCodeScanner,
+                        contentDescription = "Show QR"
+                    )
                 }
             }
         )
@@ -64,6 +82,12 @@ object OrderMenuScreen : Screen() {
             arguments?.getString(Routes.OrderMenuRoute.orderMenuOrderIdArgName)!!
         val orderViewModel: OrderViewModel = getViewModel()
 
+        ShowParticipants(showPopup = showParticipants) {
+            showParticipants = false
+        }
+        ShowQRInfo(showPopup = showQR) {
+            showQR = false
+        }
         OrderMenuContent(
             navigator = navigator,
             paddingValues = paddingValues,
@@ -72,6 +96,7 @@ object OrderMenuScreen : Screen() {
         )
 
     }
+
 }
 
 
@@ -79,6 +104,86 @@ object OrderMenuScreen : Screen() {
 fun LoadingScreen(paddingValues: PaddingValues) {
     CenteredColumn(modifier = Modifier.padding(paddingValues)) {
         CircularProgressIndicator()
+    }
+}
+
+@Composable
+fun ShowQRInfo(showPopup: Boolean, onEnd: () -> Unit) {
+    val orderViewModel: OrderViewModel = getViewModel()
+    val qrImage = getQrCodeBitmap(orderViewModel.tableId!!)
+    if (showPopup) {
+        BackPressHandler {
+            onEnd()
+        }
+        Box(modifier = Modifier.fillMaxSize()) {
+            Popup(
+                alignment = Alignment.Center,
+                onDismissRequest = {
+                    onEnd()
+                }
+            ) {
+                Column(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(16.dp))
+                        .width(350.dp)
+                        .height(400.dp)
+                        .background(MaterialTheme.colorScheme.primary),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Image(
+                        bitmap = qrImage.asImageBitmap(),
+                        contentDescription = "QRCode",
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(16.dp))
+                            .size(250.dp)
+                    )
+                    TextTitleLarge(name = "Code: ${orderViewModel.tableId!!}")
+                }
+            }
+        }
+    }
+
+}
+
+@Composable
+fun ShowParticipants(
+    showPopup: Boolean,
+    onEnd: () -> Unit,
+) {
+    val orderViewModel: OrderViewModel = getViewModel()
+    if (showPopup) {
+        BackPressHandler {
+            onEnd()
+        }
+        Box(modifier = Modifier.fillMaxSize()) {
+            Popup(
+                alignment = Alignment.Center,
+                onDismissRequest = {
+                    onEnd()
+                }
+            ) {
+                Column(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(16.dp))
+                        .width(350.dp)
+                        .height(400.dp)
+                        .background(MaterialTheme.colorScheme.primary),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Text(text = "Participants",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = Color.Black)
+                    LazyColumn {
+                        items(orderViewModel.users) { user ->
+                            TextBodyLarge(description = user)
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }
 
@@ -104,92 +209,96 @@ fun OrderMenuContent(
     }
 
     CenteredColumn(modifier = Modifier.padding(paddingValues)) {
-        Card(
-            shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(6.dp),
+        LazyColumn(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                categoriesWithDishes?.let {
-                    item {
-                        TextTitleLarge(name = "Menu")
-                    }
-                    items(it) { categoryWithDishes ->
-                        TextTitleMedium(name = categoryWithDishes.category.name)
-                        LazyRow(
-                            verticalAlignment = Alignment.Top,
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
+            categoriesWithDishes?.let {
+                items(it) { categoryWithDishes ->
+                    Card(
+                        elevation = CardDefaults.cardElevation(16.dp),
+                        shape = RoundedCornerShape(16.dp),
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            items(categoryWithDishes.dishes) { dish ->
-                                var itemCount by remember {
-                                    mutableStateOf(orderViewModel.getDishAmount(dish))
-                                }
-                                Card(
-                                    modifier = Modifier
-                                        .width(200.dp),
-                                    shape = RoundedCornerShape(16.dp),
-                                    elevation = CardDefaults.cardElevation(6.dp),
-                                ) {
-                                    Column(
-                                        modifier = Modifier.padding(16.dp),
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.SpaceBetween
+                            TextTitleLarge(name = categoryWithDishes.category.name)
+                            LazyRow(
+                                verticalAlignment = Alignment.Top,
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp)
+                            ) {
+                                items(categoryWithDishes.dishes) { dish ->
+                                    var itemCount by remember {
+                                        mutableStateOf(orderViewModel.getDishAmount(dish))
+                                    }
+                                    Card(
+                                        modifier = Modifier
+                                            .width(200.dp),
+                                        shape = RoundedCornerShape(16.dp),
+                                        elevation = CardDefaults.cardElevation(6.dp),
                                     ) {
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        Column(
+                                            modifier = Modifier.padding(8.dp),
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            verticalArrangement = Arrangement.SpaceBetween
                                         ) {
-                                            IconButton(onClick = {
-                                                itemCount--
-                                                orderViewModel.decreaseDishFromOrder(dish)
-                                            },
-                                                enabled = itemCount != 0) {
-                                                Icon(imageVector = Icons.Filled.Remove,
-                                                    contentDescription = "Remove")
-                                            }
-
-                                            TextBodyMedium(description = itemCount.toString())
-
-
-                                            IconButton(
-                                                onClick = {
-                                                    itemCount++
-                                                    orderViewModel.increaseDishToOrder(dish)
-                                                }
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.SpaceBetween
                                             ) {
-                                                Icon(imageVector = Icons.Filled.Add,
-                                                    contentDescription = "Add")
+                                                IconButton(onClick = {
+                                                    itemCount--
+                                                    orderViewModel.decreaseDishFromOrder(dish)
+                                                },
+                                                    enabled = itemCount != 0) {
+                                                    Icon(imageVector = Icons.Filled.Remove,
+                                                        contentDescription = "Remove")
+                                                }
+
+                                                TextBodyMedium(description = itemCount.toString())
+
+
+                                                IconButton(
+                                                    onClick = {
+                                                        itemCount++
+                                                        orderViewModel.increaseDishToOrder(dish)
+                                                    }
+                                                ) {
+                                                    Icon(imageVector = Icons.Filled.Add,
+                                                        contentDescription = "Add")
+                                                }
                                             }
+
+
+                                            TextTitleMedium(dish.name)
+
+                                            CircleShapeImage(
+                                                painter = rememberAsyncImagePainter("https://raw.githubusercontent.com/zucchero-sintattico/sushi-me/main/db/img/${dish.id}.jpg"),
+                                                size = 125.dp,
+                                                onClick = {
+                                                    selectedDish = dish
+                                                }
+                                            )
                                         }
 
 
-                                        TextTitleMedium(dish.name)
-
-                                        CircleShapeImage(
-                                            painter = rememberAsyncImagePainter("https://raw.githubusercontent.com/zucchero-sintattico/sushi-me/main/db/img/${dish.id}.jpg"),
-                                            size = 125.dp,
-                                            onClick = {
-                                                selectedDish = dish
-                                            }
-                                        )
                                     }
-
-
                                 }
                             }
                         }
                     }
                 }
             }
+
         }
     }
 }

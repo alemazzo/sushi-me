@@ -3,7 +3,7 @@ package io.github.alemazzo.sushime.ui.screens.restaurant_info
 import android.os.Bundle
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -29,7 +29,7 @@ object RestaurantInfoScreen : Screen() {
     override fun FloatingActionButton() {
         androidx.compose.material3.FloatingActionButton(onClick = { clicked = true }) {
             Icon(
-                imageVector = Icons.Filled.Create,
+                imageVector = Icons.Filled.Check,
                 contentDescription = "Create Table"
             )
         }
@@ -53,7 +53,10 @@ object RestaurantInfoScreen : Screen() {
             .observeAsState()
 
         if (clicked) {
-            Routes.CreationRoute.navigate(navigator, restaurant!!.id)
+            restaurant?.let {
+                Routes.CreationRoute.navigate(navigator, it.id)
+                clicked = false
+            }
         }
         restaurant?.let {
             RestaurantInfoScreenContent(navigator, paddingValues, restaurantInfoViewModel, it)
