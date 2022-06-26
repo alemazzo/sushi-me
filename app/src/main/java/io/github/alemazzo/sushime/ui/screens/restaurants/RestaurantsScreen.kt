@@ -4,10 +4,10 @@ import android.os.Bundle
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +20,7 @@ import io.github.alemazzo.sushime.navigation.routing.Route
 import io.github.alemazzo.sushime.navigation.routing.RoutePreview
 import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.RestaurantsScreenContent
+import io.github.alemazzo.sushime.utils.DefaultTopAppBar
 import io.github.alemazzo.sushime.utils.getViewModel
 import androidx.compose.material3.FloatingActionButton as FAB
 
@@ -30,7 +31,11 @@ object RestaurantsScreen : Screen() {
 
     @Composable
     override fun FloatingActionButton() {
-        FAB(onClick = { isQRScannerVisible = true }) {
+        FAB(
+            onClick = { isQRScannerVisible = true },
+            containerColor = MaterialTheme.colorScheme.secondary,
+            contentColor = contentColorFor(MaterialTheme.colorScheme.secondary)
+        ) {
             Icon(
                 imageVector = Icons.Filled.QrCodeScanner,
                 contentDescription = "Scan"
@@ -40,9 +45,7 @@ object RestaurantsScreen : Screen() {
 
     @Composable
     override fun TopBar() {
-        CenterAlignedTopAppBar(
-            title = { Text("Restaurants") }
-        )
+        DefaultTopAppBar(title = "Restaurants")
     }
 
     @Composable

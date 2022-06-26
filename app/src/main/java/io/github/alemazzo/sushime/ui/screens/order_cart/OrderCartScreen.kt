@@ -1,6 +1,7 @@
 package io.github.alemazzo.sushime.ui.screens.order_cart
 
 import android.os.Bundle
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -28,8 +29,10 @@ import io.github.alemazzo.sushime.ui.screens.order_menu.ShowQRInfo
 import io.github.alemazzo.sushime.ui.screens.order_menu.viewmodel.OrderViewModel
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.CircleShapeImage
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextBodyLarge
+import io.github.alemazzo.sushime.utils.DefaultTopAppBar
 import io.github.alemazzo.sushime.utils.WeightedColumnCenteredHorizontally
 import io.github.alemazzo.sushime.utils.getViewModel
+import io.github.alemazzo.sushime.utils.launchWithMainContext
 
 @ExperimentalMaterial3Api
 object OrderCartScreen : Screen() {
@@ -41,25 +44,32 @@ object OrderCartScreen : Screen() {
     @Composable
     override fun TopBar() {
         val orderViewModel: OrderViewModel = getViewModel()
-        CenterAlignedTopAppBar(
-            title = { Text("Cart") },
-            actions = {
-                if (orderViewModel.isCreator) {
-                    IconButton(onClick = { showParticipants = true }) {
-                        Icon(
-                            imageVector = Icons.Filled.People,
-                            contentDescription = "Users"
-                        )
-                    }
-                }
-                IconButton(onClick = { showQR = true }) {
+        DefaultTopAppBar(title = "Cart") {
+            if (orderViewModel.isCreator) {
+                IconButton(
+                    onClick = { showParticipants = true },
+                    colors = IconButtonDefaults.iconButtonColors(
+                        contentColor = contentColorFor(MaterialTheme.colorScheme.primary)
+                    )
+                ) {
                     Icon(
-                        imageVector = Icons.Filled.QrCodeScanner,
-                        contentDescription = "Show QR"
+                        imageVector = Icons.Filled.People,
+                        contentDescription = "Users"
                     )
                 }
             }
-        )
+            IconButton(
+                onClick = { showQR = true },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = contentColorFor(MaterialTheme.colorScheme.primary)
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.QrCodeScanner,
+                    contentDescription = "Show QR"
+                )
+            }
+        }
     }
 
     @Composable
@@ -85,29 +95,46 @@ object OrderCartScreen : Screen() {
         ShowQRInfo(showPopup = showQR) {
             showQR = false
         }
-        LazyColumn(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
+        Column(
+            modifier = Modifier.padding(paddingValues)
         ) {
-            items(order.values.toList()) { item: SingleOrderItem ->
-                OrderItemCard(item)
+            LazyColumn(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
+                    .fillMaxSize()
+                    .weight(5f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                items(order.values.toList()) { item: SingleOrderItem ->
+                    OrderItemCard(item)
+                }
             }
 
-            item {
-                Button(onClick = {
-                    orderViewModel.makeOrder {
-                        if (orderViewModel.isCreator) {
-                            Routes.OrderResumeRoute.navigate(navigator, orderViewModel.tableId!!)
-                        } else {
-                            Routes.OrdersRoute.navigate(navigator)
+            Column(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
+                    .fillMaxWidth()
+                    .weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Button(
+                    onClick = {
+                        orderViewModel.makeOrder {
+                            launchWithMainContext {
+                                if (orderViewModel.isCreator) {
+                                    Routes.OrderResumeRoute.navigate(navigator,
+                                        orderViewModel.tableId!!)
+                                } else {
+                                    Routes.OrdersRoute.navigate(navigator)
+                                }
+                            }
                         }
-                    }
-                }) {
+                    }) {
                     TextBodyLarge(description = "Confirm Order")
                 }
             }
+
         }
 
 
@@ -128,6 +155,10 @@ fun OrderItemCard(item: SingleOrderItem) {
             modifier = Modifier.padding(16.dp),
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(6.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.onBackground,
+                contentColor = contentColorFor(MaterialTheme.colorScheme.onBackground)
+            )
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,

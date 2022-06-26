@@ -2,11 +2,11 @@ package io.github.alemazzo.sushime.ui.screens.splash.components
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import io.github.alemazzo.sushime.config.Routes
 import io.github.alemazzo.sushime.ui.screens.splash.viewmodel.SplashViewModel
+import io.github.alemazzo.sushime.utils.Run
 import io.github.alemazzo.sushime.utils.getActivity
 import io.github.alemazzo.sushime.utils.getViewModel
 import io.github.alemazzo.sushime.utils.qr.getRestaurantIdFromQrCode
@@ -21,7 +21,7 @@ fun LoadDataAndChangeScreenAtTheEnd(
     splashViewModel: SplashViewModel = getViewModel(),
 ) {
     val context = LocalContext.current
-    LaunchedEffect(true) {
+    Run {
         splashViewModel.load()
         navController.backQueue.clear()
 
@@ -42,7 +42,7 @@ fun LoadDataAndChangeScreenAtTheEnd(
                     Routes.InfoGetRoute.navigate(navController)
                 }
             }
-            return@LaunchedEffect
+            return@Run
         }
 
         if (splashViewModel.hasAlreadyBeenRegistered()) {

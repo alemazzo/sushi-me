@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Fastfood
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -24,6 +26,7 @@ fun SplashScreenLogo() {
         contentDescription = stringResource(id = R.string.logo_description),
         modifier = Modifier
             .size(100.dp)
-            .scale(scale.value)
+            .scale(scale.value),
+        tint = contentColorFor(MaterialTheme.colorScheme.primary)
     )
 }

@@ -31,6 +31,10 @@ fun RestaurantInfoCard(ristorante: Restaurant, enabled: Boolean, onClick: () -> 
     Card(
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(6.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.onBackground,
+            contentColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.onBackground)
+        ),
         modifier = Modifier
             .clickable(enabled = enabled) { onClick() },
     ) {

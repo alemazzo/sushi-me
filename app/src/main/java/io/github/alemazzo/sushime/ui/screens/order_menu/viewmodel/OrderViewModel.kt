@@ -2,6 +2,7 @@ package io.github.alemazzo.sushime.ui.screens.order_menu.viewmodel
 
 import android.app.Application
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
@@ -33,7 +34,7 @@ class OrderViewModel(private val context: Application) : AndroidViewModel(contex
     var isCreator by mutableStateOf(false)
 
     // The order of this client
-    val order = mutableMapOf<Int, SingleOrderItem>()
+    val order = mutableStateMapOf<Int, SingleOrderItem>()
 
     // User that joined the room (must be unique)
     val users = mutableSetOf<String>()

@@ -2,6 +2,7 @@ package io.github.alemazzo.sushime.ui.screens.creation
 
 import android.os.Bundle
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -29,9 +30,7 @@ object CreationScreen : Screen() {
 
     @Composable
     override fun TopBar() {
-        CenterAlignedTopAppBar(
-            title = { Text("Create Table") }
-        )
+        DefaultTopAppBar(title = "Create Table", navigationIcon = { BackIconButton() })
     }
 
     @Composable
@@ -74,7 +73,9 @@ fun rememberCreateTable(orderViewModel: OrderViewModel = getViewModel()): Boolea
 
 @Composable
 fun ShowCircularProgressIndicator(paddingValues: PaddingValues) {
-    CenteredColumn(modifier = Modifier.padding(paddingValues)) {
+    CenteredColumn(modifier = Modifier
+        .padding(paddingValues)
+        .background(MaterialTheme.colorScheme.background)) {
         CircularProgressIndicator()
     }
 }
@@ -93,13 +94,14 @@ fun CreationScreenContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(
                 top = paddingValues.calculateTopPadding() + 16.dp,
-                bottom = paddingValues.calculateBottomPadding(),
+                bottom = paddingValues.calculateBottomPadding() + 16.dp,
                 start = 16.dp,
                 end = 16.dp
             ),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         RestaurantInfoCardInCreation(ristorante = restaurant)
@@ -131,7 +133,11 @@ fun CreationScreenContent(
 fun RestaurantInfoCardInCreation(ristorante: Restaurant) {
     Card(
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(6.dp)
+        elevation = CardDefaults.cardElevation(6.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.onBackground,
+            contentColor = contentColorFor(MaterialTheme.colorScheme.onBackground)
+        )
     ) {
         Row(
             verticalAlignment = Alignment.Top,

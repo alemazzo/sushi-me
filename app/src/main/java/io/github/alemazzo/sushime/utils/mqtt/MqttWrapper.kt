@@ -78,14 +78,14 @@ class MqttWrapper(context: Context) {
 
     fun disconnect(onDisconnect: () -> Unit) {
         try {
+            channelMap.keys.forEach {
+                this.unsubscribe(it)
+            }
+            channelMap = mutableMapOf()
             mqttClient.disconnect(null, object : IMqttActionListener {
                 override fun onSuccess(asyncActionToken: IMqttToken?) {
                     Log.d(TAG, "Disconnected")
                     this@MqttWrapper.isConnected = false
-                    channelMap.keys.forEach {
-                        this@MqttWrapper.unsubscribe(it)
-                    }
-                    channelMap = mutableMapOf()
                     onDisconnect()
                 }
 

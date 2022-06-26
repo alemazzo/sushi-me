@@ -17,6 +17,7 @@ import io.github.alemazzo.sushime.navigation.routing.Route
 import io.github.alemazzo.sushime.navigation.routing.RoutePreview
 import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.ui.screens.join.components.JoinScreenContent
+import io.github.alemazzo.sushime.utils.DefaultTopAppBar
 
 
 @ExperimentalMaterial3Api
@@ -26,17 +27,19 @@ object JoinScreen : Screen() {
 
     @Composable
     override fun TopBar() {
-        CenterAlignedTopAppBar(
-            title = { Text("Join") },
-            actions = {
-                IconButton(onClick = { useCamera = !useCamera }) {
-                    Icon(
-                        imageVector = if (useCamera) Icons.Filled.TextFields else Icons.Filled.QrCodeScanner,
-                        contentDescription = "Use Code"
-                    )
-                }
+        DefaultTopAppBar(title = "Join") {
+            IconButton(
+                onClick = { useCamera = !useCamera },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = contentColorFor(MaterialTheme.colorScheme.primary)
+                )
+            ) {
+                Icon(
+                    imageVector = if (useCamera) Icons.Filled.TextFields else Icons.Filled.QrCodeScanner,
+                    contentDescription = "Use Code"
+                )
             }
-        )
+        }
     }
 
     @Composable

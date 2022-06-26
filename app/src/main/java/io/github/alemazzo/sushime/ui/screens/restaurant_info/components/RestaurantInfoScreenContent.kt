@@ -1,14 +1,13 @@
 package io.github.alemazzo.sushime.ui.screens.restaurant_info.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -19,6 +18,7 @@ import androidx.compose.ui.window.Popup
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import io.github.alemazzo.sushime.config.Routes
+import io.github.alemazzo.sushime.model.database.dishes.CategoryWithDishes
 import io.github.alemazzo.sushime.model.database.dishes.Dish
 import io.github.alemazzo.sushime.model.database.restaurants.Restaurant
 import io.github.alemazzo.sushime.ui.screens.restaurant_info.viewmodel.RestaurantInfoViewModel
@@ -34,6 +34,8 @@ fun RestaurantInfoScreenContent(
     restaurantInfoViewModel: RestaurantInfoViewModel,
     restaurant: Restaurant,
 ) {
+    val categoriesWithDishes by restaurantInfoViewModel.categoriesRepository.getAllCategoriesWithDishes()
+        .observeAsState()
 
     var selectedDish: Dish? by remember {
         mutableStateOf(null)
@@ -47,11 +49,12 @@ fun RestaurantInfoScreenContent(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(
-                top = paddingValues.calculateTopPadding() + 16.dp,
-                bottom = paddingValues.calculateBottomPadding(),
-                start = 16.dp,
-                end = 16.dp
+                top = paddingValues.calculateTopPadding() + 8.dp,
+                bottom = paddingValues.calculateBottomPadding() + 8.dp,
+                start = 8.dp,
+                end = 8.dp
             ),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -59,9 +62,12 @@ fun RestaurantInfoScreenContent(
         item {
             RestaurantInfoCard(ristorante = restaurant)
         }
+
         item {
-            RestaurantInfoMenuRow(restaurantInfoViewModel) { selectedDish = it }
+            TextTitleLarge(name = "I nostri piatti")
         }
+
+        RestaurantInfoMenuRow(restaurantInfoViewModel, categoriesWithDishes) { selectedDish = it }
     }
 }
 
@@ -125,64 +131,54 @@ fun CreateTableButton(navigator: NavHostController, restaurant: Restaurant) {
 }
 
 @ExperimentalMaterial3Api
-@Composable
-fun RestaurantInfoMenuRow(
+fun LazyListScope.RestaurantInfoMenuRow(
     restaurantInfoViewModel: RestaurantInfoViewModel,
+    categoriesWithDishes: List<CategoryWithDishes>?,
     onDishClick: (Dish) -> Unit,
 ) {
-
-    val categoriesWithDishes by restaurantInfoViewModel.categoriesRepository.getAllCategoriesWithDishes()
-        .observeAsState()
-
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(6.dp),
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(top = 10.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            TextTitleLarge(name = "I nostri piatti")
-            LazyColumn(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth()
-                    .height(350.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+    categoriesWithDishes?.let {
+        items(categoriesWithDishes) { categoryWithDishes ->
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                elevation = CardDefaults.cardElevation(6.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.onBackground,
+                    contentColor = contentColorFor(MaterialTheme.colorScheme.onBackground)
+                )
             ) {
-                categoriesWithDishes?.let {
-                    items(it) { categoryWithDishes ->
-                        TextTitleMedium(name = categoryWithDishes.category.name)
-                        LazyRow(
-                            verticalAlignment = Alignment.Top,
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                        ) {
-                            items(categoryWithDishes.dishes) { dish ->
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    CircleShapeImage(
-                                        painter = rememberAsyncImagePainter("https://raw.githubusercontent.com/zucchero-sintattico/sushi-me/main/db/img/${dish.id}.jpg"),
-                                        size = 100.dp,
-                                        onClick = {
-                                            onDishClick(dish)
-                                        }
-                                    )
-                                    TextBodyMediumWithMaximumWidth(description = dish.name,
-                                        maxWidth = 100.dp)
-                                }
+                Column(
+                    modifier = Modifier.padding(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    TextTitleMedium(name = categoryWithDishes.category.name)
+                    LazyRow(
+                        verticalAlignment = Alignment.Top,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        items(categoryWithDishes.dishes) { dish ->
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                CircleShapeImage(
+                                    painter = rememberAsyncImagePainter("https://raw.githubusercontent.com/zucchero-sintattico/sushi-me/main/db/img/${dish.id}.jpg"),
+                                    size = 100.dp,
+                                    onClick = {
+                                        onDishClick(dish)
+                                    }
+                                )
+                                TextBodyMediumWithMaximumWidth(description = dish.name,
+                                    maxWidth = 100.dp)
                             }
                         }
                     }
                 }
             }
+
         }
     }
 }
@@ -192,7 +188,11 @@ fun RestaurantInfoMenuRow(
 fun RestaurantInfoCard(ristorante: Restaurant) {
     Card(
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(6.dp)
+        elevation = CardDefaults.cardElevation(6.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.onBackground,
+            contentColor = contentColorFor(MaterialTheme.colorScheme.onBackground)
+        )
     ) {
         Row(
             verticalAlignment = Alignment.Top,

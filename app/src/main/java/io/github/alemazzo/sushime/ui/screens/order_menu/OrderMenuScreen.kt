@@ -34,6 +34,7 @@ import io.github.alemazzo.sushime.ui.screens.order_menu.viewmodel.OrderViewModel
 import io.github.alemazzo.sushime.ui.screens.restaurant_info.components.ShowDishInfo
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.*
 import io.github.alemazzo.sushime.utils.CenteredColumn
+import io.github.alemazzo.sushime.utils.DefaultTopAppBar
 import io.github.alemazzo.sushime.utils.getViewModel
 import io.github.alemazzo.sushime.utils.qr.getQrCodeBitmap
 
@@ -47,25 +48,32 @@ object OrderMenuScreen : Screen() {
     @Composable
     override fun TopBar() {
         val orderViewModel: OrderViewModel = getViewModel()
-        CenterAlignedTopAppBar(
-            title = { Text("Menu") },
-            actions = {
-                if (orderViewModel.isCreator) {
-                    IconButton(onClick = { showParticipants = true }) {
-                        Icon(
-                            imageVector = Icons.Filled.People,
-                            contentDescription = "Users"
-                        )
-                    }
-                }
-                IconButton(onClick = { showQR = true }) {
+        DefaultTopAppBar(title = "Menu") {
+            if (orderViewModel.isCreator) {
+                IconButton(
+                    onClick = { showParticipants = true },
+                    colors = IconButtonDefaults.iconButtonColors(
+                        contentColor = contentColorFor(MaterialTheme.colorScheme.primary)
+                    )
+                ) {
                     Icon(
-                        imageVector = Icons.Filled.QrCodeScanner,
-                        contentDescription = "Show QR"
+                        imageVector = Icons.Filled.People,
+                        contentDescription = "Users"
                     )
                 }
             }
-        )
+            IconButton(
+                onClick = { showQR = true },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = contentColorFor(MaterialTheme.colorScheme.primary)
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.QrCodeScanner,
+                    contentDescription = "Show QR"
+                )
+            }
+        }
     }
 
     @Composable
@@ -216,6 +224,7 @@ fun OrderMenuContent(
         LazyColumn(
             modifier = Modifier
                 .padding(16.dp)
+                .background(MaterialTheme.colorScheme.background)
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -225,6 +234,10 @@ fun OrderMenuContent(
                     Card(
                         elevation = CardDefaults.cardElevation(16.dp),
                         shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.onBackground,
+                            contentColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.onBackground)
+                        ),
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp),
@@ -248,6 +261,10 @@ fun OrderMenuContent(
                                             .width(200.dp),
                                         shape = RoundedCornerShape(16.dp),
                                         elevation = CardDefaults.cardElevation(6.dp),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                            contentColor = contentColorFor(MaterialTheme.colorScheme.secondaryContainer)
+                                        ),
                                     ) {
                                         Column(
                                             modifier = Modifier.padding(8.dp),

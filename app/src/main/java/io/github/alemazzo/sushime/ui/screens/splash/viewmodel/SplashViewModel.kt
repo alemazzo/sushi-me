@@ -17,8 +17,8 @@ class SplashViewModel(application: Application) :
 
     suspend fun load() {
         withIOContext {
-            getDatabase()
-            delay(1000)
+            getDatabase() // load the database if not present
+            delay(1000) // reasonable amount of time for splash screen
         }
     }
 
