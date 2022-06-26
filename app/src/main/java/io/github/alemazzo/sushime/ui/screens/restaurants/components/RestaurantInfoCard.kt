@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import io.github.alemazzo.sushime.model.database.ristorante.Ristorante
+import io.github.alemazzo.sushime.model.database.restaurants.Restaurant
 import io.github.alemazzo.sushime.utils.WeightedColumnCenteredHorizontally
 
 data class RestaurantInfo(val name: String, val description: String, val image: Int)
@@ -26,7 +26,7 @@ data class RestaurantInfo(val name: String, val description: String, val image: 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RestaurantInfoCard(ristorante: Ristorante, enabled: Boolean, onClick: () -> Unit) {
+fun RestaurantInfoCard(ristorante: Restaurant, enabled: Boolean, onClick: () -> Unit) {
 
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -44,11 +44,8 @@ fun RestaurantInfoCard(ristorante: Ristorante, enabled: Boolean, onClick: () -> 
             WeightedColumnCenteredHorizontally(1f) {
                 RestaurantInfoCardImageSection(ristorante)
             }
-            WeightedColumnCenteredHorizontally(2f) {
+            WeightedColumnCenteredHorizontally(3f) {
                 RestaurantInfoCardNameAndLocationSection(ristorante)
-            }
-            WeightedColumnCenteredHorizontally(1f) {
-                RestaurantInfoCardStarsSection()
             }
         }
     }
@@ -56,20 +53,20 @@ fun RestaurantInfoCard(ristorante: Ristorante, enabled: Boolean, onClick: () -> 
 
 
 @Composable
-fun RestaurantInfoCardImageSection(ristorante: Ristorante) {
+fun RestaurantInfoCardImageSection(ristorante: Restaurant) {
     CircleShapeImage(painter = rememberAsyncImagePainter(model = "https://raw.githubusercontent.com/zucchero-sintattico/sushi-me/main/db/restaurant-img/${ristorante.id}.jpg"))
 }
 
 @Composable
-fun RestaurantInfoCardNameAndLocationSection(ristorante: Ristorante) {
+fun RestaurantInfoCardNameAndLocationSection(ristorante: Restaurant) {
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.Start,
         modifier = Modifier.padding(4.dp)
     ) {
-        TextTitleMedium(name = ristorante.nome)
+        TextTitleMedium(name = ristorante.name)
         Spacer(modifier = Modifier.height(8.dp))
-        TextBodySmall(description = ristorante.descrizione)
+        TextBodySmall(description = ristorante.description)
     }
 }
 
@@ -159,7 +156,7 @@ fun CircleShapeImage(bitmap: ImageBitmap, size: Dp = 80.dp, onClick: () -> Unit 
 @Preview
 @Composable
 fun RestaurantInfoCardPreview() {
-    val ristorante = Ristorante(
+    val ristorante = Restaurant(
         1,
         "Restaurant 1",
         "Descrizione"

@@ -12,6 +12,6 @@ class CategoriesRepository(private val database: AppDatabase) {
     val insert = categoriesDao::insert
     val update = categoriesDao::update
     val delete = categoriesDao::delete
-    val getAllCategoriesWithDishes = categoriesDao::getCategorieConPiatti
+    val getAllCategoriesWithDishes = categoriesDao::getCategoriesWithDishes
 
 }

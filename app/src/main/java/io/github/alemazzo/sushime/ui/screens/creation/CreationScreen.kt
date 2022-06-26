@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import io.github.alemazzo.sushime.config.Routes
-import io.github.alemazzo.sushime.model.database.ristorante.Ristorante
+import io.github.alemazzo.sushime.model.database.restaurants.Restaurant
 import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.ui.screens.creation.viewmodel.CreationViewModel
 import io.github.alemazzo.sushime.ui.screens.order_menu.OrderViewModel
@@ -43,16 +43,9 @@ object CreationScreen : Screen() {
         val creationViewModel: CreationViewModel = getViewModel()
         val restaurantId =
             arguments?.getString(Routes.CreationRoute.createRouteRestaurantIdArgName)!!.toInt()
-        val restaurant by creationViewModel.restaurantsRepository.getById(restaurantId)
-            .observeAsState()
+        val restaurant by creationViewModel.getRestaurant(restaurantId).observeAsState()
 
-        var ready by remember {
-            mutableStateOf(false)
-        }
-        CreateTable {
-            ready = true
-        }
-
+        val ready = rememberCreateTable()
         when {
             !ready || restaurant == null -> ShowCircularProgressIndicator(paddingValues)
             else -> CreationScreenContent(
@@ -65,14 +58,18 @@ object CreationScreen : Screen() {
 }
 
 @Composable
-fun CreateTable(orderViewModel: OrderViewModel = getViewModel(), onComplete: () -> Unit) {
+fun rememberCreateTable(orderViewModel: OrderViewModel = getViewModel()): Boolean {
+    var created by remember {
+        mutableStateOf(false)
+    }
     LaunchedEffect(key1 = true) {
         getRandomString(5).let { tableId ->
             orderViewModel.createTable(tableId) {
-                onComplete()
+                created = true
             }
         }
     }
+    return created
 }
 
 @Composable
@@ -87,7 +84,7 @@ fun ShowCircularProgressIndicator(paddingValues: PaddingValues) {
 fun CreationScreenContent(
     navigator: NavHostController,
     paddingValues: PaddingValues,
-    restaurant: Ristorante,
+    restaurant: Restaurant,
     creationViewModel: CreationViewModel = getViewModel(),
     orderViewModel: OrderViewModel = getViewModel(),
 ) {
@@ -131,7 +128,7 @@ fun CreationScreenContent(
 
 @ExperimentalMaterial3Api
 @Composable
-fun RestaurantInfoCardInCreation(ristorante: Ristorante) {
+fun RestaurantInfoCardInCreation(ristorante: Restaurant) {
     Card(
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(6.dp)
@@ -156,7 +153,7 @@ fun RestaurantInfoCardInCreation(ristorante: Ristorante) {
                     horizontalAlignment = Alignment.Start,
                     modifier = Modifier.padding(4.dp)
                 ) {
-                    TextTitleLarge(ristorante.nome)
+                    TextTitleLarge(ristorante.name)
                 }
             }
         }

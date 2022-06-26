@@ -17,6 +17,5 @@ class MainActivity : ComponentActivity() {
                 startingRoute = Routes.SplashRoute
             )
         }
-
     }
 }

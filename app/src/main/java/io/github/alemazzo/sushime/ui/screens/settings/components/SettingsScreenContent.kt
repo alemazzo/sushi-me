@@ -7,14 +7,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import io.github.alemazzo.sushime.ui.screens.settings.viewmodel.SettingsViewModel
 
 @ExperimentalMaterial3Api
 @Composable
 fun SettingsScreenContent(
     navController: NavHostController,
     paddingValues: PaddingValues,
-    settingsViewModel: SettingsViewModel,
 ) {
     Column(
         modifier = Modifier
@@ -28,7 +26,7 @@ fun SettingsScreenContent(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        UserAccountCard(settingsViewModel)
-        SettingsSection(paddingValues)
+        UserAccountCard()
+        SettingsSection()
     }
 }

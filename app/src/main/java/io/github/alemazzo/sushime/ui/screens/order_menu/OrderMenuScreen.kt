@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -19,7 +20,7 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import io.github.alemazzo.sushime.config.BottomBars
 import io.github.alemazzo.sushime.config.Routes
-import io.github.alemazzo.sushime.model.database.piatto.Piatto
+import io.github.alemazzo.sushime.model.database.dishes.Dish
 import io.github.alemazzo.sushime.navigation.routing.Route
 import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.ui.screens.restaurant_info.components.ShowDishInfo
@@ -33,6 +34,18 @@ import io.github.alemazzo.sushime.utils.getViewModel
 
 @ExperimentalMaterial3Api
 object OrderMenuScreen : Screen() {
+    @Composable
+    override fun TopBar() {
+        CenterAlignedTopAppBar(
+            title = { Text("Menu") },
+            actions = {
+                IconButton(onClick = {}) {
+                    Icon(imageVector = Icons.Filled.People, contentDescription = "Users")
+                }
+            }
+        )
+    }
+
     @Composable
     override fun BottomBar(navigator: NavHostController, currentRoute: Route) {
         val orderViewModel: OrderViewModel = getViewModel()
@@ -50,27 +63,13 @@ object OrderMenuScreen : Screen() {
         val tableId =
             arguments?.getString(Routes.OrderMenuRoute.orderMenuOrderIdArgName)!!
         val orderViewModel: OrderViewModel = getViewModel()
-        var isConnected by remember { mutableStateOf(false) }
 
-        LaunchedEffect(key1 = true) {
-            orderViewModel.createMqttInstance { mqtt ->
-                mqtt.connect {
-                    mqtt.join(tableId) {
-                        isConnected = true
-                    }
-                }
-            }
-        }
-
-        when {
-            !isConnected -> LoadingScreen(paddingValues)
-            else -> OrderMenuContent(
-                navigator = navigator,
-                paddingValues = paddingValues,
-                tableId = tableId,
-                orderViewModel = orderViewModel
-            )
-        }
+        OrderMenuContent(
+            navigator = navigator,
+            paddingValues = paddingValues,
+            tableId = tableId,
+            orderViewModel = orderViewModel
+        )
 
     }
 }
@@ -94,7 +93,7 @@ fun OrderMenuContent(
     val categoriesWithDishes by orderViewModel.categoriesRepository.getAllCategoriesWithDishes()
         .observeAsState()
 
-    var selectedDish: Piatto? by remember {
+    var selectedDish: Dish? by remember {
         mutableStateOf(null)
     }
 
@@ -121,7 +120,7 @@ fun OrderMenuContent(
                         TextTitleLarge(name = "Menu")
                     }
                     items(it) { categoryWithDishes ->
-                        TextTitleMedium(name = categoryWithDishes.categoria.nome)
+                        TextTitleMedium(name = categoryWithDishes.category.name)
                         LazyRow(
                             verticalAlignment = Alignment.Top,
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -129,7 +128,7 @@ fun OrderMenuContent(
                                 .fillMaxWidth()
                                 .padding(16.dp)
                         ) {
-                            items(categoryWithDishes.piatti) { dish ->
+                            items(categoryWithDishes.dishes) { dish ->
                                 var itemCount by remember {
                                     mutableStateOf(orderViewModel.getDishAmount(dish))
                                 }

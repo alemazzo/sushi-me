@@ -2,10 +2,15 @@ package io.github.alemazzo.sushime.ui.screens.restaurant_info
 
 import android.os.Bundle
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import io.github.alemazzo.sushime.config.BottomBars
 import io.github.alemazzo.sushime.config.Routes
@@ -17,6 +22,18 @@ import io.github.alemazzo.sushime.utils.getViewModel
 
 @ExperimentalMaterial3Api
 object RestaurantInfoScreen : Screen() {
+
+    var clicked by mutableStateOf(false)
+
+    @Composable
+    override fun FloatingActionButton() {
+        androidx.compose.material3.FloatingActionButton(onClick = { clicked = true }) {
+            Icon(
+                imageVector = Icons.Filled.Create,
+                contentDescription = "Create Table"
+            )
+        }
+    }
 
     @Composable
     override fun BottomBar(navigator: NavHostController, currentRoute: Route) {
@@ -32,9 +49,13 @@ object RestaurantInfoScreen : Screen() {
         val restaurantId =
             arguments?.getString(Routes.RestaurantInfoRoute.restaurantIdArgName)!!.toInt()
         val restaurantInfoViewModel: RestaurantInfoViewModel = getViewModel()
-        val ristorante by restaurantInfoViewModel.restaurantsRepository.getById(restaurantId)
+        val restaurant by restaurantInfoViewModel.restaurantsRepository.getById(restaurantId)
             .observeAsState()
-        ristorante?.let {
+
+        if (clicked) {
+            Routes.CreationRoute.navigate(navigator, restaurant!!.id)
+        }
+        restaurant?.let {
             RestaurantInfoScreenContent(navigator, paddingValues, restaurantInfoViewModel, it)
         }
 

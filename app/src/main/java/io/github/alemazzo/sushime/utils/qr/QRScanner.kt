@@ -53,7 +53,7 @@ fun QRScanner(onTextChange: (String) -> Unit, width: Dp, height: Dp) {
         .clip(RoundedCornerShape(16.dp))
     ) {
         if (hasCameraPermission) {
-            cameraProviderFuture.get().unbindAll()
+            // cameraProviderFuture.get().unbindAll()
             AndroidView(
                 factory = { context ->
                     val previewView = PreviewView(context)

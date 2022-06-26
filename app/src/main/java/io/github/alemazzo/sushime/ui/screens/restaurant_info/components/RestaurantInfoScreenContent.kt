@@ -19,8 +19,8 @@ import androidx.compose.ui.window.Popup
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import io.github.alemazzo.sushime.config.Routes
-import io.github.alemazzo.sushime.model.database.piatto.Piatto
-import io.github.alemazzo.sushime.model.database.ristorante.Ristorante
+import io.github.alemazzo.sushime.model.database.dishes.Dish
+import io.github.alemazzo.sushime.model.database.restaurants.Restaurant
 import io.github.alemazzo.sushime.ui.screens.restaurant_info.viewmodel.RestaurantInfoViewModel
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.*
 import io.github.alemazzo.sushime.utils.WeightedColumnCentered
@@ -32,10 +32,10 @@ fun RestaurantInfoScreenContent(
     navController: NavHostController,
     paddingValues: PaddingValues,
     restaurantInfoViewModel: RestaurantInfoViewModel,
-    restaurant: Ristorante,
+    restaurant: Restaurant,
 ) {
 
-    var selectedDish: Piatto? by remember {
+    var selectedDish: Dish? by remember {
         mutableStateOf(null)
     }
 
@@ -62,16 +62,13 @@ fun RestaurantInfoScreenContent(
         item {
             RestaurantInfoMenuRow(restaurantInfoViewModel) { selectedDish = it }
         }
-        item {
-            CreateTableButton(navigator = navController, restaurant = restaurant)
-        }
     }
 }
 
 @ExperimentalMaterial3Api
 @Composable
 fun ShowDishInfo(
-    dish: Piatto,
+    dish: Dish,
     onEnd: () -> Unit,
 ) {
     BackPressHandler {
@@ -104,7 +101,7 @@ fun ShowDishInfo(
                         painter = rememberAsyncImagePainter(model = "https://raw.githubusercontent.com/zucchero-sintattico/sushi-me/main/db/img/${dish.id}.jpg"),
                         size = 200.dp
                     )
-                    TextBodyLarge(description = dish.descrizione)
+                    TextBodyLarge(description = dish.description)
                 }
             }
 
@@ -116,7 +113,7 @@ fun ShowDishInfo(
 
 @ExperimentalMaterial3Api
 @Composable
-fun CreateTableButton(navigator: NavHostController, restaurant: Ristorante) {
+fun CreateTableButton(navigator: NavHostController, restaurant: Restaurant) {
     Button(
         modifier = Modifier.clip(RoundedCornerShape(16.dp)),
         onClick = {
@@ -131,7 +128,7 @@ fun CreateTableButton(navigator: NavHostController, restaurant: Ristorante) {
 @Composable
 fun RestaurantInfoMenuRow(
     restaurantInfoViewModel: RestaurantInfoViewModel,
-    onDishClick: (Piatto) -> Unit,
+    onDishClick: (Dish) -> Unit,
 ) {
 
     val categoriesWithDishes by restaurantInfoViewModel.categoriesRepository.getAllCategoriesWithDishes()
@@ -158,7 +155,7 @@ fun RestaurantInfoMenuRow(
             ) {
                 categoriesWithDishes?.let {
                     items(it) { categoryWithDishes ->
-                        TextTitleMedium(name = categoryWithDishes.categoria.nome)
+                        TextTitleMedium(name = categoryWithDishes.category.name)
                         LazyRow(
                             verticalAlignment = Alignment.Top,
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -166,7 +163,7 @@ fun RestaurantInfoMenuRow(
                                 .fillMaxWidth()
                                 .padding(16.dp)
                         ) {
-                            items(categoryWithDishes.piatti) { dish ->
+                            items(categoryWithDishes.dishes) { dish ->
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     verticalArrangement = Arrangement.Center
@@ -192,7 +189,7 @@ fun RestaurantInfoMenuRow(
 
 @ExperimentalMaterial3Api
 @Composable
-fun RestaurantInfoCard(ristorante: Ristorante) {
+fun RestaurantInfoCard(ristorante: Restaurant) {
     Card(
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(6.dp)
@@ -216,7 +213,7 @@ fun RestaurantInfoCard(ristorante: Ristorante) {
                     horizontalAlignment = Alignment.Start,
                     modifier = Modifier.padding(4.dp)
                 ) {
-                    TextTitleLarge(ristorante.nome)
+                    TextTitleLarge(ristorante.name)
                     TextBodySmall(description = "Via Salvatore Quasimodo 421, Cesena, 47522")
                 }
             }
@@ -228,7 +225,7 @@ fun RestaurantInfoCard(ristorante: Ristorante) {
                 .padding(16.dp)
                 .height(IntrinsicSize.Min)
         ) {
-            TextBodyMedium(ristorante.descrizione)
+            TextBodyMedium(ristorante.description)
         }
     }
 }

@@ -11,9 +11,11 @@ import io.github.alemazzo.sushime.navigation.routing.RoutePreview
 import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.ui.screens.splash.components.LoadDataAndChangeScreenAtTheEnd
 import io.github.alemazzo.sushime.ui.screens.splash.components.SplashScreenContent
-import io.github.alemazzo.sushime.ui.screens.splash.viewmodel.SplashViewModel
-import io.github.alemazzo.sushime.utils.getViewModel
 
+/**
+ * The Splash Screen.
+ * The first screen of the app, load all data (if needed).
+ */
 @ExperimentalMaterial3Api
 object SplashScreen : Screen() {
     @Composable
@@ -22,8 +24,7 @@ object SplashScreen : Screen() {
         paddingValues: PaddingValues,
         arguments: Bundle?,
     ) {
-        val splashViewModel: SplashViewModel = getViewModel()
-        LoadDataAndChangeScreenAtTheEnd(splashViewModel, navigator)
+        LoadDataAndChangeScreenAtTheEnd(navigator)
         SplashScreenContent(paddingValues)
     }
 }

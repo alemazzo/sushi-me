@@ -9,24 +9,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.alemazzo.sushime.ui.screens.settings.viewmodel.SettingsViewModel
-import io.github.alemazzo.sushime.utils.WeightedColumnCentered
-import io.github.alemazzo.sushime.utils.WeightedColumnCenteredHorizontally
-import io.github.alemazzo.sushime.utils.launchWithIOContext
-import kotlinx.coroutines.flow.first
+import io.github.alemazzo.sushime.utils.*
 
 @ExperimentalMaterial3Api
 @Composable
-fun UserAccountCard(settingsViewModel: SettingsViewModel) {
+fun UserAccountCard(settingsViewModel: SettingsViewModel = getViewModel()) {
     var isEditing by remember {
         mutableStateOf(false)
     }
     var name by remember { mutableStateOf("") }
     var surname by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
-    LaunchedEffect(key1 = true) {
-        name = settingsViewModel.userDataStore.getName().first()!!
-        surname = settingsViewModel.userDataStore.getSurname().first()!!
-        email = settingsViewModel.userDataStore.getEmail().first()!!
+    Run {
+        name = settingsViewModel.getName()!!
+        surname = settingsViewModel.getSurname()!!
+        email = settingsViewModel.getEmail()!!
     }
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -51,9 +48,9 @@ fun UserAccountCard(settingsViewModel: SettingsViewModel) {
                 EditIconSection(isEditing) {
                     if (isEditing) {
                         launchWithIOContext {
-                            settingsViewModel.userDataStore.updateName(name)
-                            settingsViewModel.userDataStore.updateSurname(surname)
-                            settingsViewModel.userDataStore.updateEmail(email)
+                            settingsViewModel.updateName(name)
+                            settingsViewModel.updateSurname(surname)
+                            settingsViewModel.updateEmail(email)
                         }
                     }
                     isEditing = !isEditing
@@ -84,7 +81,7 @@ fun UserAccountCard(settingsViewModel: SettingsViewModel) {
                     },
                     email = email,
                     onEmailEdit = {
-                        email = email
+                        email = it
                     }
                 )
             }

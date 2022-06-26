@@ -1,11 +1,21 @@
 package io.github.alemazzo.sushime.utils
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import kotlinx.coroutines.*
+
+@Composable
+fun Run(block: suspend CoroutineScope.() -> Unit) {
+    LaunchedEffect(key1 = true, block = block)
+}
 
 /**
  * Execute a coroutine with the specified Context.
  */
-fun launchWithCoroutineContext(dispatcher: CoroutineDispatcher, function: suspend CoroutineScope.() -> Unit) {
+fun launchWithCoroutineContext(
+    dispatcher: CoroutineDispatcher,
+    function: suspend CoroutineScope.() -> Unit,
+) {
     CoroutineScope(dispatcher).launch {
         function()
     }
@@ -33,20 +43,20 @@ fun launchWithDefaultContext(function: suspend CoroutineScope.() -> Unit) {
 }
 
 
-suspend fun <T> withIOContext(block: suspend CoroutineScope.() -> T){
+suspend fun <T> withIOContext(block: suspend CoroutineScope.() -> T) {
     withContext(Dispatchers.IO) {
         block()
     }
 }
 
 
-suspend fun <T> withMainContext(block: suspend CoroutineScope.() -> T){
+suspend fun <T> withMainContext(block: suspend CoroutineScope.() -> T) {
     withContext(Dispatchers.Main) {
         block()
     }
 }
 
-suspend fun <T> withDefaultContext(block: suspend CoroutineScope.() -> T){
+suspend fun <T> withDefaultContext(block: suspend CoroutineScope.() -> T) {
     withContext(Dispatchers.Default) {
         block()
     }

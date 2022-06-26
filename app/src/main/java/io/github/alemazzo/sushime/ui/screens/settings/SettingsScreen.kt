@@ -14,8 +14,6 @@ import io.github.alemazzo.sushime.navigation.routing.Route
 import io.github.alemazzo.sushime.navigation.routing.RoutePreview
 import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.ui.screens.settings.components.SettingsScreenContent
-import io.github.alemazzo.sushime.ui.screens.settings.viewmodel.SettingsViewModel
-import io.github.alemazzo.sushime.utils.getViewModel
 
 @ExperimentalMaterial3Api
 object SettingsScreen : Screen() {
@@ -38,8 +36,7 @@ object SettingsScreen : Screen() {
         paddingValues: PaddingValues,
         arguments: Bundle?,
     ) {
-        val settingsViewModel: SettingsViewModel = getViewModel()
-        SettingsScreenContent(navigator, paddingValues, settingsViewModel)
+        SettingsScreenContent(navigator, paddingValues)
     }
 
 }
