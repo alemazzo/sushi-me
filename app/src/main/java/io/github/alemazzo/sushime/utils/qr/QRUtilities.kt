@@ -6,13 +6,19 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
 
+fun isSushimeQRCode(content: String): Boolean =
+    content.contains("://") && content.split("://")[0] == "sushime"
+
+fun getSushimeQRCodeContent(content: String): String? =
+    if (isSushimeQRCode(content)) content.split("://")[1] else null
+
 fun isRestaurantQrCode(content: String): Boolean =
     content.contains("/") && content.split("/")[0] == "restaurants"
 
 fun isTableQrCode(content: String): Boolean =
-    content.contains("/") && content.split("/")[0] == "tables"
+    content.contains("/") && content.split("/")[0] == "table"
 
-fun getRestaurantIdFromQrCode(content: String): Int? =
+fun getRestaurantIdFromQrCodeContent(content: String): Int? =
     if (isRestaurantQrCode(content)) content.split("/")[1].toInt() else null
 
 fun getTableIdFromQrCode(content: String): String? =

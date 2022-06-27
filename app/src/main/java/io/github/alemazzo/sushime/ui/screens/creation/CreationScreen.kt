@@ -75,7 +75,7 @@ fun rememberCreateTable(orderViewModel: OrderViewModel = getViewModel()): Boolea
 fun ShowCircularProgressIndicator(paddingValues: PaddingValues) {
     CenteredColumn(modifier = Modifier
         .padding(paddingValues)
-        .background(MaterialTheme.colorScheme.background)) {
+        .background(MaterialTheme.colorScheme.primaryContainer)) {
         CircularProgressIndicator()
     }
 }
@@ -94,7 +94,7 @@ fun CreationScreenContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.colorScheme.primaryContainer)
             .padding(
                 top = paddingValues.calculateTopPadding() + 16.dp,
                 bottom = paddingValues.calculateBottomPadding() + 16.dp,
@@ -135,8 +135,8 @@ fun RestaurantInfoCardInCreation(ristorante: Restaurant) {
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(6.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.onBackground,
-            contentColor = contentColorFor(MaterialTheme.colorScheme.onBackground)
+            containerColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.onBackground
         )
     ) {
         Row(

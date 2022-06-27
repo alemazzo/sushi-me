@@ -220,11 +220,12 @@ fun OrderMenuContent(
         }
     }
 
-    CenteredColumn(modifier = Modifier.padding(paddingValues)) {
+    CenteredColumn(modifier = Modifier
+        .padding(paddingValues)
+        .background(MaterialTheme.colorScheme.primaryContainer)) {
         LazyColumn(
             modifier = Modifier
-                .padding(16.dp)
-                .background(MaterialTheme.colorScheme.background)
+                .padding(8.dp)
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -235,8 +236,8 @@ fun OrderMenuContent(
                         elevation = CardDefaults.cardElevation(16.dp),
                         shape = RoundedCornerShape(16.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.onBackground,
-                            contentColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.onBackground)
+                            containerColor = MaterialTheme.colorScheme.background,
+                            contentColor = MaterialTheme.colorScheme.onBackground
                         ),
                     ) {
                         Column(

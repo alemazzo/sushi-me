@@ -8,7 +8,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import io.github.alemazzo.sushime.config.Routes
 import io.github.alemazzo.sushime.ui.screens.restaurants.viewmodel.RestaurantsScreenViewModel
-import io.github.alemazzo.sushime.utils.qr.getRestaurantIdFromQrCode
+import io.github.alemazzo.sushime.utils.qr.getRestaurantIdFromQrCodeContent
 import io.github.alemazzo.sushime.utils.qr.isRestaurantQrCode
 
 @ExperimentalMaterial3Api
@@ -28,7 +28,7 @@ fun RestaurantsScreenContent(
         },
         onResult = { result ->
             if (isRestaurantQrCode(result)) {
-                val restaurantId = getRestaurantIdFromQrCode(result)
+                val restaurantId = getRestaurantIdFromQrCodeContent(result)
                 Routes.RestaurantInfoRoute.navigate(
                     navigator = navController,
                     restaurantId = restaurantId!!

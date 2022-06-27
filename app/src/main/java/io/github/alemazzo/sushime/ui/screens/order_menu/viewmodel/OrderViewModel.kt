@@ -1,10 +1,7 @@
 package io.github.alemazzo.sushime.ui.screens.order_menu.viewmodel
 
 import android.app.Application
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.lifecycle.AndroidViewModel
 import io.github.alemazzo.sushime.model.database.dishes.Dish
 import io.github.alemazzo.sushime.model.orders.SingleOrder
@@ -40,7 +37,7 @@ class OrderViewModel(private val context: Application) : AndroidViewModel(contex
     val users = mutableSetOf<String>()
 
     // The arrived orders
-    val orders = mutableListOf<SingleOrder>()
+    val orders = mutableStateListOf<SingleOrder>()
 
 
     fun getDishAmount(dish: Dish): Int {
@@ -80,7 +77,7 @@ class OrderViewModel(private val context: Application) : AndroidViewModel(contex
             mqtt.joinAsCreator(
                 tableId = tableId,
                 onNewUser = { users.add(it) },
-                onNewOrderSent = { orders.add(SingleOrder.fromString(it)) }
+                onNewOrderSent = { orders.add(SingleOrder.loadFromString(it)) }
             ) {
                 onCreated()
             }

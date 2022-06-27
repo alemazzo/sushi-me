@@ -6,17 +6,15 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -32,6 +30,7 @@ import io.github.alemazzo.sushime.ui.screens.order_menu.ShowQRInfo
 import io.github.alemazzo.sushime.ui.screens.order_menu.viewmodel.OrderViewModel
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.CircleShapeImage
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextBodyLarge
+import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextTitleLarge
 import io.github.alemazzo.sushime.utils.DefaultTopAppBar
 import io.github.alemazzo.sushime.utils.WeightedColumnCenteredHorizontally
 import io.github.alemazzo.sushime.utils.getViewModel
@@ -83,6 +82,7 @@ object OrderCartScreen : Screen() {
             mapOf(Routes.OrderCartRoute.orderMenuOrderIdArgName to orderViewModel.tableId!!))
     }
 
+    @OptIn(ExperimentalMaterialApi::class)
     @Composable
     override fun Content(
         navigator: NavHostController,
@@ -99,11 +99,13 @@ object OrderCartScreen : Screen() {
             showQR = false
         }
         Column(
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.primaryContainer)
         ) {
             LazyColumn(
                 modifier = Modifier
-                    .background(MaterialTheme.colorScheme.background)
                     .fillMaxSize()
                     .weight(5f),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -115,7 +117,6 @@ object OrderCartScreen : Screen() {
 
             Column(
                 modifier = Modifier
-                    .background(MaterialTheme.colorScheme.background)
                     .fillMaxWidth()
                     .weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -134,7 +135,7 @@ object OrderCartScreen : Screen() {
                             }
                         }
                     }) {
-                    TextBodyLarge(description = "Confirm Order")
+                    TextTitleLarge("Confirm Order")
                 }
             }
 
@@ -149,15 +150,16 @@ object OrderCartScreen : Screen() {
 fun OrderItemCard(item: SingleOrderItem) {
     val orderViewModel: OrderViewModel = getViewModel()
     val dish by orderViewModel.dishesRepository.getById(item.dishId).observeAsState()
-
+    var itemCount by remember { mutableStateOf(item.quantity) }
     dish?.let {
+
         Card(
             modifier = Modifier.padding(16.dp),
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(6.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.onBackground,
-                contentColor = contentColorFor(MaterialTheme.colorScheme.onBackground)
+                containerColor = MaterialTheme.colorScheme.background,
+                contentColor = MaterialTheme.colorScheme.onBackground
             )
         ) {
             Row(
@@ -177,16 +179,18 @@ fun OrderItemCard(item: SingleOrderItem) {
                     IconButton(
                         onClick = {
                             orderViewModel.increaseDishToOrder(dish!!)
+                            itemCount = orderViewModel.getDishAmount(dish!!)
                         }
                     ) {
                         Icon(imageVector = Icons.Filled.Add,
                             contentDescription = "Add")
                     }
-                    TextBodyLarge(description = item.quantity.toString())
+                    TextBodyLarge(description = itemCount.toString())
                     IconButton(
-                        enabled = item.quantity > 0,
+                        enabled = itemCount > 0,
                         onClick = {
                             orderViewModel.decreaseDishFromOrder(dish!!)
+                            itemCount = orderViewModel.getDishAmount(dish!!)
                         }
                     ) {
                         Icon(imageVector = Icons.Filled.Remove,

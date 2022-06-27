@@ -50,7 +50,7 @@ fun ShowNormalContent(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.primaryContainer),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -62,7 +62,7 @@ fun ShowNormalContent(
                 when {
                     isRestaurantQrCode(it) -> {
                         Routes.RestaurantInfoRoute.navigate(navController,
-                            getRestaurantIdFromQrCode(it)!!)
+                            getRestaurantIdFromQrCodeContent(it)!!)
                     }
                     isTableQrCode(it) -> {
                         code = getTableIdFromQrCode(it)!!

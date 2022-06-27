@@ -26,7 +26,6 @@ class SushimeMqtt(private val application: Application, private val userId: Stri
                     }
                 }
             }
-
         }
 
     }

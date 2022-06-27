@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">sushime</string>
+    <string name="app_name">Sushime</string>
     <string name="logo_description">Logo</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="login_title">Login</string>
