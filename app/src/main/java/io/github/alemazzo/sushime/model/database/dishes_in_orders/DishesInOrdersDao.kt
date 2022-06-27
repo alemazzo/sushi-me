@@ -16,7 +16,7 @@ abstract class DishesInOrdersDao {
     abstract fun getByOrderId(orderId: Int): LiveData<List<DishInOrder>>
 
     @Insert
-    abstract fun insert(vararg dishInOrder: DishInOrder)
+    abstract fun insert(dishInOrder: DishInOrder)
 
     @Update
     abstract fun update(dishInOrder: DishInOrder)

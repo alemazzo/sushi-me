@@ -15,14 +15,17 @@ class SushimeMqtt(private val application: Application, private val userId: Stri
         tableId: String,
         onNewOrderSent: (String) -> Unit,
         onNewUser: (String) -> Unit,
+        onQuitUser: (String) -> Unit,
         onJoin: (SushimeMqtt) -> Unit = {},
     ) {
         mqttWrapper.connect {
             this.tableId = tableId
             mqttWrapper.subscribe("$tableId/newUser", onMessage = onNewUser) {
-                mqttWrapper.subscribe("$tableId/menu", onMessage = onNewOrderSent) {
-                    mqttWrapper.publish("$tableId/newUser", userId) {
-                        onJoin(this)
+                mqttWrapper.subscribe("$tableId/quitUser", onMessage = onQuitUser) {
+                    mqttWrapper.subscribe("$tableId/menu", onMessage = onNewOrderSent) {
+                        mqttWrapper.publish("$tableId/newUser", userId) {
+                            onJoin(this)
+                        }
                     }
                 }
             }
@@ -34,14 +37,15 @@ class SushimeMqtt(private val application: Application, private val userId: Stri
         tableId: String,
         onNewOrderSent: (String) -> Unit,
         onNewUser: (String) -> Unit,
+        onQuitUser: (String) -> Unit,
         onJoin: (SushimeMqtt) -> Unit = {},
     ) {
         if (mqttWrapper.isConnected) {
             mqttWrapper.disconnect {
-                this._joinAsCreator(tableId, onNewOrderSent, onNewUser, onJoin)
+                this._joinAsCreator(tableId, onNewOrderSent, onNewUser, onQuitUser, onJoin)
             }
         } else {
-            this._joinAsCreator(tableId, onNewOrderSent, onNewUser, onJoin)
+            this._joinAsCreator(tableId, onNewOrderSent, onNewUser, onQuitUser, onJoin)
         }
     }
 
@@ -64,11 +68,10 @@ class SushimeMqtt(private val application: Application, private val userId: Stri
         }
     }
 
-    fun makeOrderAndDisconnect(order: String, onMake: (SushimeMqtt) -> Unit = {}) {
-        mqttWrapper.publish("$tableId/menu", order) {
-            this.mqttWrapper.disconnect {
-                onMake(this)
-            }
+    fun makeOrder(user: String, order: String, onMake: (SushimeMqtt) -> Unit = {}) {
+        val message = "$user,$order"
+        mqttWrapper.publish("$tableId/menu", message) {
+            onMake(this)
         }
     }
 

@@ -42,6 +42,7 @@ class MqttWrapper(context: Context) {
         mqttClient.setCallback(object : MqttCallback {
             override fun messageArrived(topic: String?, message: MqttMessage?) {
                 Log.d(TAG, "Receive message: ${message.toString()} from topic: $topic")
+                Log.d(TAG, "ChannelMap = $channelMap")
                 if (channelMap.containsKey(topic)) {
                     channelMap[topic]?.invoke(message.toString())
                 }
@@ -49,12 +50,6 @@ class MqttWrapper(context: Context) {
 
             override fun connectionLost(cause: Throwable?) {
                 Log.d(TAG, "Connection lost ${cause.toString()}")
-                /*
-                this@MqttWrapper.reconnect {
-
-                    onConnect(this@MqttWrapper)
-                }
-                 */
             }
 
             override fun deliveryComplete(token: IMqttDeliveryToken?) {
@@ -104,12 +99,13 @@ class MqttWrapper(context: Context) {
         onMessage: (String) -> Unit,
         onSubscribe: () -> Unit,
     ) {
-        channelMap[topic] = onMessage
+
         try {
             mqttClient.subscribe(topic, qos, null, object : IMqttActionListener {
                 override fun onSuccess(asyncActionToken: IMqttToken?) {
-                    onSubscribe()
                     Log.d(TAG, "Subscribed to $topic")
+                    channelMap[topic] = onMessage
+                    onSubscribe()
                 }
 
                 override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {

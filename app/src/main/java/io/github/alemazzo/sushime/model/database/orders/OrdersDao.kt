@@ -15,11 +15,12 @@ abstract class OrdersDao {
     @Query("SELECT * FROM orders WHERE restaurantId = :restaurantId")
     abstract fun getAllOrdersByRestaurantId(restaurantId: Int): LiveData<List<Order>>
 
+    @Transaction
     @Query("SELECT * FROM orders")
     abstract fun getAllOrdersWithDishInOrder(): LiveData<List<OrderWithDishInOrder>>
 
     @Insert
-    abstract fun insert(vararg order: Order)
+    abstract fun insert(order: Order): Long
 
     @Update
     abstract fun update(order: Order)
