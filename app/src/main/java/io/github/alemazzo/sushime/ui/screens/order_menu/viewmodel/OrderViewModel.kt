@@ -1,7 +1,6 @@
 package io.github.alemazzo.sushime.ui.screens.order_menu.viewmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.compose.runtime.*
 import androidx.lifecycle.AndroidViewModel
 import io.github.alemazzo.sushime.model.database.dishes.Dish
@@ -35,8 +34,10 @@ class OrderViewModel(private val context: Application) : AndroidViewModel(contex
 
     // Table info
     var userId: String? = null
+    var restaurantId: Int? = null
     var tableId: String? = null
     var isCreator by mutableStateOf(false)
+    var hasJoined = false
 
     // The order of this client
     val order = mutableStateMapOf<Int, SingleOrderItem>()
@@ -47,6 +48,17 @@ class OrderViewModel(private val context: Application) : AndroidViewModel(contex
     // The arrived orders
     val orders = mutableStateMapOf<String, SingleOrder>()
 
+    fun getUniqueOrdersList(): List<SingleOrderItem> {
+        val result = mutableMapOf<Int, Int>()
+        orders.values.flatMap { it.items }.forEach {
+            if (result.containsKey(it.dishId)) {
+                result[it.dishId] = result[it.dishId]!! + it.quantity
+            } else {
+                result[it.dishId] = it.quantity
+            }
+        }
+        return result.map { SingleOrderItem(it.key, it.value) }
+    }
 
     fun getDishAmount(dish: Dish): Int {
         return order[dish.id]?.quantity ?: 0
@@ -68,65 +80,130 @@ class OrderViewModel(private val context: Application) : AndroidViewModel(contex
         }
     }
 
-
-    private fun connect(tableId: String, isCreator: Boolean, onConnected: (SushimeMqtt) -> Unit) {
-        this.isCreator = isCreator
-        this.tableId = tableId
+    private fun saveOrderToDb(onEnd: () -> Unit = {}) {
         launchWithIOContext {
-            userDataStore.getEmail().first()?.let {
-                userId = it
-                sushimeMqtt = SushimeMqtt(context, it)
-                sushimeMqtt!!.connect { mqtt ->
-                    onConnected(mqtt)
-                }
+            val ord = Order(0, System.currentTimeMillis(), this@OrderViewModel.restaurantId!!)
+            val id = ordersRepository.insert(ord).toInt()
+            order.values.forEach { item ->
+                val dishInOrder = DishInOrder(item.dishId, id, item.quantity)
+                dishesInOrdersRepository.insert(dishInOrder)
             }
+            onEnd()
         }
     }
 
     private fun handleNewOrderSent(order: String) {
         val user = order.split(",")[0]
         val parsedOrder = order.removePrefix("$user,")
-        Log.d("TEST", "Handle New Order: user = $user, parsedOrder = $parsedOrder")
         orders[user] = SingleOrder.loadFromString(parsedOrder)
     }
 
-    fun createTable(tableId: String, onCreated: () -> Unit = {}) {
-        connect(tableId, true) { mqtt ->
-            mqtt.joinAsCreator(
-                tableId = tableId,
-                onNewUser = { if (!users.contains(it)) users.add(it) },
-                onQuitUser = { if (users.contains(it)) users.remove(it) },
-                onNewOrderSent = { handleNewOrderSent(it) }
-            ) {
-                onCreated()
+    private fun handleFinalMenuReceived(finalMenu: String, onEnd: () -> Unit) {
+        val restaurantId = finalMenu.split(",")[0].toInt()
+        this.restaurantId = restaurantId
+        saveOrderToDb {
+            onEnd()
+        }
+    }
+
+    fun resetData() {
+        this.tableId = null
+        this.restaurantId = null
+        this.isCreator = false
+        this.hasJoined = false
+        this.order.clear()
+        this.users.clear()
+        this.orders.clear()
+    }
+
+    fun createTable(restaurantId: Int, tableId: String, onCreated: () -> Unit = {}) {
+        if (hasJoined) {
+            onCreated()
+            return
+        } else {
+            hasJoined = true
+            launchWithIOContext {
+                userDataStore.getEmail().first()?.let {
+                    this@OrderViewModel.userId = it
+                    this@OrderViewModel.isCreator = true
+                    this@OrderViewModel.restaurantId = restaurantId
+                    this@OrderViewModel.tableId = tableId
+                    sushimeMqtt = SushimeMqtt(context, it)
+                    sushimeMqtt!!.joinAsCreator(
+                        tableId = tableId,
+                        onNewUser = { if (!users.contains(it)) users.add(it) },
+                        onQuitUser = { if (users.contains(it)) users.remove(it) },
+                        onNewOrderSent = { handleNewOrderSent(it) }
+                    ) {
+                        onCreated()
+                    }
+                }
             }
         }
+
     }
 
     fun joinTable(tableId: String, onJoin: () -> Unit = {}) {
-        connect(tableId, false) { mqtt ->
-            mqtt.join(tableId) {
-                onJoin()
+        if (hasJoined) {
+            onJoin()
+            return
+        } else {
+            hasJoined = true
+            launchWithIOContext {
+                userDataStore.getEmail().first()?.let {
+                    this@OrderViewModel.userId = it
+                    this@OrderViewModel.isCreator = false
+                    this@OrderViewModel.tableId = tableId
+                    sushimeMqtt = SushimeMqtt(context, it)
+                    sushimeMqtt!!.join(tableId) {
+                        onJoin()
+                    }
+                }
+            }
+        }
+
+    }
+
+    fun makeOrder(onMake: () -> Unit) {
+        launchWithIOContext {
+            val finalOrder = SingleOrder(order.values.toList())
+            sushimeMqtt!!.makeOrder(
+                user = userId!!,
+                tableId = tableId!!,
+                order = finalOrder.exportToString(),
+                onMake = { onMake() }
+            )
+        }
+    }
+
+    fun makeOrderAndWaitForFinalMenu(onMake: () -> Unit = {}, onFinalMenuReceived: () -> Unit) {
+        launchWithIOContext {
+            val finalOrder = SingleOrder(order.values.toList())
+            sushimeMqtt!!.makeOrderAndWaitForFinalMenu(
+                user = userId!!,
+                tableId = tableId!!,
+                order = finalOrder.exportToString(),
+                onMake = { onMake() }
+            ) {
+                handleFinalMenuReceived(it) {
+                    resetData()
+                    onFinalMenuReceived()
+                }
             }
         }
     }
 
-    private fun saveOrderToDb(order: SingleOrder) {
-        val ord = Order(0, System.currentTimeMillis(), 1)
-        val id = ordersRepository.insert(ord).toInt()
-        order.items.forEach { item ->
-            val dishInOrder = DishInOrder(item.dishId, id, item.quantity)
-            dishesInOrdersRepository.insert(dishInOrder)
-        }
-        Log.d("DBINFO", "ORDERID = $id")
-    }
-
-    fun makeOrder(onMake: () -> Unit = {}) {
+    fun closeTable(onClose: () -> Unit = {}) {
         launchWithIOContext {
-            val finalOrder = SingleOrder(order.values.toList())
-            saveOrderToDb(finalOrder)
-            sushimeMqtt!!.makeOrder(userId!!, finalOrder.exportToString()) {
-                onMake()
+            val uniqueList = getUniqueOrdersList()
+            sushimeMqtt!!.closeTable(
+                tableId = tableId!!,
+                restaurantId = this@OrderViewModel.restaurantId!!,
+                orders = uniqueList
+            ) {
+                saveOrderToDb {
+                    onClose()
+                }
             }
         }
     }

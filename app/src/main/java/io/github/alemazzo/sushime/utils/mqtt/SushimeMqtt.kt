@@ -1,11 +1,11 @@
 package io.github.alemazzo.sushime.utils.mqtt
 
 import android.app.Application
+import io.github.alemazzo.sushime.model.orders.SingleOrderItem
 
 class SushimeMqtt(private val application: Application, private val userId: String) {
 
     private var mqttWrapper: MqttWrapper = MqttWrapper(application)
-    private var tableId: String? = null
 
     fun connect(onConnect: (SushimeMqtt) -> Unit = {}) {
         mqttWrapper.connect { onConnect(this) }
@@ -19,13 +19,10 @@ class SushimeMqtt(private val application: Application, private val userId: Stri
         onJoin: (SushimeMqtt) -> Unit = {},
     ) {
         mqttWrapper.connect {
-            this.tableId = tableId
             mqttWrapper.subscribe("$tableId/newUser", onMessage = onNewUser) {
                 mqttWrapper.subscribe("$tableId/quitUser", onMessage = onQuitUser) {
                     mqttWrapper.subscribe("$tableId/menu", onMessage = onNewOrderSent) {
-                        mqttWrapper.publish("$tableId/newUser", userId) {
-                            onJoin(this)
-                        }
+                        onJoin(this)
                     }
                 }
             }
@@ -51,7 +48,6 @@ class SushimeMqtt(private val application: Application, private val userId: Stri
 
     private fun _join(tableId: String, onJoin: (SushimeMqtt) -> Unit = {}) {
         mqttWrapper.connect {
-            this.tableId = tableId
             mqttWrapper.publish("$tableId/newUser", userId) {
                 onJoin(this)
             }
@@ -68,10 +64,48 @@ class SushimeMqtt(private val application: Application, private val userId: Stri
         }
     }
 
-    fun makeOrder(user: String, order: String, onMake: (SushimeMqtt) -> Unit = {}) {
+    fun makeOrder(
+        user: String,
+        order: String,
+        tableId: String,
+        onMake: (SushimeMqtt) -> Unit = {},
+    ) {
         val message = "$user,$order"
         mqttWrapper.publish("$tableId/menu", message) {
             onMake(this)
+        }
+    }
+
+    fun makeOrderAndWaitForFinalMenu(
+        user: String,
+        order: String,
+        tableId: String,
+        onMake: (SushimeMqtt) -> Unit = {},
+        onFinalMenuReceived: (String) -> Unit = {},
+    ) {
+        val message = "$user,$order"
+        mqttWrapper.publish("$tableId/menu", message) {
+            mqttWrapper.subscribe(
+                "$tableId/finalMenu",
+                onMessage = { onFinalMenuReceived(it) }
+            ) {
+                onMake(this)
+            }
+        }
+    }
+
+    fun closeTable(
+        restaurantId: Int,
+        tableId: String,
+        orders: List<SingleOrderItem>,
+        onClose: () -> Unit = {},
+    ) {
+        val serializedOrder = orders.joinToString(separator = ",") { "${it.dishId}:${it.quantity}" }
+        val message = "$restaurantId,$serializedOrder"
+        mqttWrapper.publish("$tableId/finalMenu", message) {
+            mqttWrapper.disconnect {
+                onClose()
+            }
         }
     }
 

@@ -13,7 +13,7 @@ fun getSushimeQRCodeContent(content: String): String? =
     if (isSushimeQRCode(content)) content.split("://")[1] else null
 
 fun isRestaurantQrCode(content: String): Boolean =
-    content.contains("/") && content.split("/")[0] == "restaurants"
+    content.contains("/") && content.split("/")[0] == "restaurant"
 
 fun isTableQrCode(content: String): Boolean =
     content.contains("/") && content.split("/")[0] == "table"

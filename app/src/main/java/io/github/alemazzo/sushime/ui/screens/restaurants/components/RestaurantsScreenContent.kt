@@ -1,5 +1,6 @@
 package io.github.alemazzo.sushime.ui.screens.restaurants.components
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -9,7 +10,9 @@ import androidx.navigation.NavHostController
 import io.github.alemazzo.sushime.config.Routes
 import io.github.alemazzo.sushime.ui.screens.restaurants.viewmodel.RestaurantsScreenViewModel
 import io.github.alemazzo.sushime.utils.qr.getRestaurantIdFromQrCodeContent
+import io.github.alemazzo.sushime.utils.qr.getSushimeQRCodeContent
 import io.github.alemazzo.sushime.utils.qr.isRestaurantQrCode
+import io.github.alemazzo.sushime.utils.qr.isSushimeQRCode
 
 @ExperimentalMaterial3Api
 @Composable
@@ -27,14 +30,18 @@ fun RestaurantsScreenContent(
             onQRScannerVisibilityChange(false)
         },
         onResult = { result ->
-            if (isRestaurantQrCode(result)) {
-                val restaurantId = getRestaurantIdFromQrCodeContent(result)
-                Routes.RestaurantInfoRoute.navigate(
-                    navigator = navController,
-                    restaurantId = restaurantId!!
-                )
-            } else {
+            Log.d("TEST", result)
+            if (!isSushimeQRCode(result)) {
                 Toast.makeText(context, "Not a Sushime QR Code", Toast.LENGTH_LONG).show()
+            } else {
+                val content = getSushimeQRCodeContent(result)!!
+                if (isRestaurantQrCode(content)) {
+                    val restaurantId = getRestaurantIdFromQrCodeContent(content)
+                    Routes.RestaurantInfoRoute.navigate(
+                        navigator = navController,
+                        restaurantId = restaurantId!!
+                    )
+                }
             }
         }
     )

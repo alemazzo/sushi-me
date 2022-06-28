@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import io.github.alemazzo.sushime.model.database.restaurants.Restaurant
+import io.github.alemazzo.sushime.model.repositories.images.ImagesRepository
 import io.github.alemazzo.sushime.utils.WeightedColumnCenteredHorizontally
 
 data class RestaurantInfo(val name: String, val description: String, val image: Int)
@@ -58,7 +59,9 @@ fun RestaurantInfoCard(ristorante: Restaurant, enabled: Boolean, onClick: () -> 
 
 @Composable
 fun RestaurantInfoCardImageSection(ristorante: Restaurant) {
-    CircleShapeImage(painter = rememberAsyncImagePainter(model = "https://raw.githubusercontent.com/zucchero-sintattico/sushi-me/main/db/restaurant-img/${ristorante.id}.jpg"))
+    val imagesRepository = ImagesRepository()
+    CircleShapeImage(painter = rememberAsyncImagePainter(imagesRepository.getRestaurantImageLink(
+        ristorante)))
 }
 
 @Composable

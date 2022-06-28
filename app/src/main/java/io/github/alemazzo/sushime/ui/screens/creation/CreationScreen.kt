@@ -17,6 +17,7 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import io.github.alemazzo.sushime.config.Routes
 import io.github.alemazzo.sushime.model.database.restaurants.Restaurant
+import io.github.alemazzo.sushime.model.repositories.images.ImagesRepository
 import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.ui.screens.creation.viewmodel.CreationViewModel
 import io.github.alemazzo.sushime.ui.screens.order_menu.viewmodel.OrderViewModel
@@ -44,7 +45,7 @@ object CreationScreen : Screen() {
             arguments?.getString(Routes.CreationRoute.createRouteRestaurantIdArgName)!!.toInt()
         val restaurant by creationViewModel.getRestaurant(restaurantId).observeAsState()
 
-        val ready = rememberCreateTable()
+        val ready = rememberCreateTable(restaurantId)
         when {
             !ready || restaurant == null -> ShowCircularProgressIndicator(paddingValues)
             else -> CreationScreenContent(
@@ -57,13 +58,16 @@ object CreationScreen : Screen() {
 }
 
 @Composable
-fun rememberCreateTable(orderViewModel: OrderViewModel = getViewModel()): Boolean {
+fun rememberCreateTable(
+    restaurantId: Int,
+    orderViewModel: OrderViewModel = getViewModel(),
+): Boolean {
     var created by remember {
         mutableStateOf(false)
     }
     LaunchedEffect(key1 = true) {
         getRandomString(5).let { tableId ->
-            orderViewModel.createTable(tableId) {
+            orderViewModel.createTable(restaurantId, tableId) {
                 created = true
             }
         }
@@ -131,6 +135,7 @@ fun CreationScreenContent(
 @ExperimentalMaterial3Api
 @Composable
 fun RestaurantInfoCardInCreation(ristorante: Restaurant) {
+    val imagesRepository = ImagesRepository()
     Card(
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(6.dp),
@@ -149,7 +154,8 @@ fun RestaurantInfoCardInCreation(ristorante: Restaurant) {
         ) {
             WeightedColumnCenteredHorizontally(2f) {
                 CircleShapeImage(
-                    painter = rememberAsyncImagePainter(model = "https://raw.githubusercontent.com/zucchero-sintattico/sushi-me/main/db/restaurant-img/${ristorante.id}.jpg"),
+                    painter = rememberAsyncImagePainter(imagesRepository.getRestaurantImageLink(
+                        ristorante)),
                     size = 120.dp
                 )
             }

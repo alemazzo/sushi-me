@@ -27,6 +27,7 @@ import coil.compose.rememberAsyncImagePainter
 import io.github.alemazzo.sushime.config.BottomBars
 import io.github.alemazzo.sushime.config.Routes
 import io.github.alemazzo.sushime.model.database.dishes.Dish
+import io.github.alemazzo.sushime.model.repositories.images.ImagesRepository
 import io.github.alemazzo.sushime.navigation.routing.Route
 import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.ui.screens.order_menu.viewmodel.OrderViewModel
@@ -207,6 +208,7 @@ fun OrderMenuContent(
     tableId: String,
     orderViewModel: OrderViewModel,
 ) {
+    val imagesRepository = ImagesRepository()
     val categoriesWithDishes by orderViewModel.categoriesRepository.getAllCategoriesWithDishes()
         .observeAsState()
 
@@ -304,7 +306,8 @@ fun OrderMenuContent(
                                             TextTitleMedium(dish.name)
 
                                             CircleShapeImage(
-                                                painter = rememberAsyncImagePainter("https://raw.githubusercontent.com/zucchero-sintattico/sushi-me/main/db/img/${dish.id}.jpg"),
+                                                painter = rememberAsyncImagePainter(imagesRepository.getDishImageLink(
+                                                    dish)),
                                                 size = 125.dp,
                                                 onClick = {
                                                     selectedDish = dish

@@ -21,6 +21,7 @@ import io.github.alemazzo.sushime.config.Routes
 import io.github.alemazzo.sushime.model.database.dishes.CategoryWithDishes
 import io.github.alemazzo.sushime.model.database.dishes.Dish
 import io.github.alemazzo.sushime.model.database.restaurants.Restaurant
+import io.github.alemazzo.sushime.model.repositories.images.ImagesRepository
 import io.github.alemazzo.sushime.ui.screens.restaurant_info.viewmodel.RestaurantInfoViewModel
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.*
 import io.github.alemazzo.sushime.utils.WeightedColumnCentered
@@ -77,6 +78,7 @@ fun ShowDishInfo(
     dish: Dish,
     onEnd: () -> Unit,
 ) {
+    val imagesRepository = ImagesRepository()
     BackPressHandler {
         onEnd()
     }
@@ -104,7 +106,7 @@ fun ShowDishInfo(
                 ) {
                     TextTitleLarge(name = dish.name)
                     CircleShapeImage(
-                        painter = rememberAsyncImagePainter(model = "https://raw.githubusercontent.com/zucchero-sintattico/sushi-me/main/db/img/${dish.id}.jpg"),
+                        painter = rememberAsyncImagePainter(imagesRepository.getDishImageLink(dish)),
                         size = 200.dp
                     )
                     TextBodyLarge(description = dish.description)
@@ -136,6 +138,7 @@ fun LazyListScope.RestaurantInfoMenuRow(
     categoriesWithDishes: List<CategoryWithDishes>?,
     onDishClick: (Dish) -> Unit,
 ) {
+    val imagesRepository = ImagesRepository()
     categoriesWithDishes?.let {
         items(categoriesWithDishes) { categoryWithDishes ->
             Card(
@@ -165,7 +168,8 @@ fun LazyListScope.RestaurantInfoMenuRow(
                                 verticalArrangement = Arrangement.Center
                             ) {
                                 CircleShapeImage(
-                                    painter = rememberAsyncImagePainter("https://raw.githubusercontent.com/zucchero-sintattico/sushi-me/main/db/img/${dish.id}.jpg"),
+                                    painter = rememberAsyncImagePainter(imagesRepository.getDishImageLink(
+                                        dish)),
                                     size = 100.dp,
                                     onClick = {
                                         onDishClick(dish)
@@ -186,6 +190,7 @@ fun LazyListScope.RestaurantInfoMenuRow(
 @ExperimentalMaterial3Api
 @Composable
 fun RestaurantInfoCard(ristorante: Restaurant) {
+    val imagesRepository = ImagesRepository()
     Card(
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(6.dp),
@@ -203,7 +208,8 @@ fun RestaurantInfoCard(ristorante: Restaurant) {
         ) {
             WeightedColumnCenteredHorizontally(2f) {
                 CircleShapeImage(
-                    painter = rememberAsyncImagePainter(model = "https://raw.githubusercontent.com/zucchero-sintattico/sushi-me/main/db/restaurant-img/${ristorante.id}.jpg"),
+                    painter = rememberAsyncImagePainter(imagesRepository.getRestaurantImageLink(
+                        ristorante)),
                     size = 120.dp
                 )
             }

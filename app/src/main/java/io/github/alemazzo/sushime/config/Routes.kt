@@ -7,16 +7,21 @@ import io.github.alemazzo.sushime.ui.screens.creation.CreationScreen
 import io.github.alemazzo.sushime.ui.screens.infoget.InfoGetScreen
 import io.github.alemazzo.sushime.ui.screens.join.JoinScreen
 import io.github.alemazzo.sushime.ui.screens.order_cart.OrderCartScreen
+import io.github.alemazzo.sushime.ui.screens.order_final_resume.OrderFinalResumeScreen
+import io.github.alemazzo.sushime.ui.screens.order_info.OrderInfoScreen
 import io.github.alemazzo.sushime.ui.screens.order_menu.OrderMenuScreen
 import io.github.alemazzo.sushime.ui.screens.order_resume.OrderResumeScreen
+import io.github.alemazzo.sushime.ui.screens.order_resume_info.OrderResumeInfoScreen
 import io.github.alemazzo.sushime.ui.screens.orders.OrdersScreen
 import io.github.alemazzo.sushime.ui.screens.restaurant_info.RestaurantInfoScreen
 import io.github.alemazzo.sushime.ui.screens.restaurants.RestaurantsScreen
 import io.github.alemazzo.sushime.ui.screens.settings.SettingsScreen
 import io.github.alemazzo.sushime.ui.screens.splash.SplashScreen
+import io.github.alemazzo.sushime.ui.screens.waiting.WaitingScreen
 
 @ExperimentalMaterial3Api
 object Routes {
+
 
     // Startup Routes
     object SplashRoute : Route(
@@ -130,6 +135,46 @@ object Routes {
         }
     }
 
+    const val userIdArgName = "user-id"
+
+    object OrderResumeInfoRoute : Route(
+        path = "order-resume-info/{$userIdArgName}",
+        arguments = listOf(userIdArgName),
+        screen = OrderResumeInfoScreen
+    ) {
+        const val orderUserIdArgName = userIdArgName
+        fun navigate(navigator: NavHostController, userId: String) {
+            navigate(
+                navigator = navigator,
+                arguments = mapOf(userIdArgName to userId)
+            )
+        }
+    }
+
+    object OrderInfoRoute : Route(
+        path = "order-info/{$orderMenuRouteArgName}",
+        arguments = listOf(orderMenuRouteArgName),
+        screen = OrderInfoScreen
+    ) {
+        val orderIdArgName = orderMenuRouteArgName
+        fun navigate(navigator: NavHostController, orderId: Int) {
+            navigate(
+                navigator = navigator,
+                arguments = mapOf(orderIdArgName to orderId.toString())
+            )
+        }
+    }
+
+    object OrderFinalResumeRoute : Route(
+        path = "order-final-resume",
+        screen = OrderFinalResumeScreen
+    )
+
+    object WaitingRoute : Route(
+        path = "waiting",
+        screen = WaitingScreen
+    )
+
     fun all(): List<Route> = listOf(
 
         // Startup
@@ -140,6 +185,7 @@ object Routes {
         RestaurantsRoute,
         JoinRoute,
         OrdersRoute,
+        OrderInfoRoute,
         SettingsRoute,
 
         // Specific
@@ -151,6 +197,10 @@ object Routes {
         // Order
         OrderMenuRoute,
         OrderCartRoute,
-        OrderResumeRoute
+        OrderResumeRoute,
+        OrderResumeInfoRoute,
+        OrderFinalResumeRoute,
+
+        WaitingRoute
     )
 }

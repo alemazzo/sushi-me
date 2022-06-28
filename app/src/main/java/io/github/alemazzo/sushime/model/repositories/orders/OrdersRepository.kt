@@ -10,6 +10,7 @@ class OrdersRepository(private val database: AppDatabase) {
     val getById = ordersDatabase::getById
     val getAllOrdersByRestaurantId = ordersDatabase::getAllOrdersByRestaurantId
     val getAllOrdersWithDishInOrder = ordersDatabase::getAllOrdersWithDishInOrder
+    val getOrderWithDishesInOrderByOrderId = ordersDatabase::getOrderWithDishesInOrderByOrderId
     val insert = ordersDatabase::insert
     val update = ordersDatabase::update
     val delete = ordersDatabase::delete

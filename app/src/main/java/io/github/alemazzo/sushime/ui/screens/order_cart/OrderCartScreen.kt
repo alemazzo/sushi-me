@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.People
@@ -23,6 +22,7 @@ import coil.compose.rememberAsyncImagePainter
 import io.github.alemazzo.sushime.config.BottomBars
 import io.github.alemazzo.sushime.config.Routes
 import io.github.alemazzo.sushime.model.orders.SingleOrderItem
+import io.github.alemazzo.sushime.model.repositories.images.ImagesRepository
 import io.github.alemazzo.sushime.navigation.routing.Route
 import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.ui.screens.order_menu.ShowParticipants
@@ -82,7 +82,6 @@ object OrderCartScreen : Screen() {
             mapOf(Routes.OrderCartRoute.orderMenuOrderIdArgName to orderViewModel.tableId!!))
     }
 
-    @OptIn(ExperimentalMaterialApi::class)
     @Composable
     override fun Content(
         navigator: NavHostController,
@@ -124,15 +123,25 @@ object OrderCartScreen : Screen() {
             ) {
                 Button(
                     onClick = {
-                        orderViewModel.makeOrder {
-                            launchWithMainContext {
-                                if (orderViewModel.isCreator) {
-                                    Routes.OrderResumeRoute.navigate(navigator,
-                                        orderViewModel.tableId!!)
-                                } else {
-                                    Routes.OrdersRoute.navigate(navigator)
-                                }
+                        if (orderViewModel.isCreator) {
+                            orderViewModel.makeOrder {
+                                Routes.OrderResumeRoute.navigate(navigator,
+                                    orderViewModel.tableId!!)
                             }
+                        } else {
+                            orderViewModel.makeOrderAndWaitForFinalMenu(
+                                onMake = {
+                                    launchWithMainContext {
+                                        Routes.WaitingRoute.navigate(navigator)
+                                    }
+                                },
+                                onFinalMenuReceived = {
+                                    launchWithMainContext {
+                                        navigator.backQueue.clear()
+                                        Routes.OrdersRoute.navigate(navigator)
+                                    }
+                                }
+                            )
                         }
                     }) {
                     TextTitleLarge("Confirm Order")
@@ -148,6 +157,7 @@ object OrderCartScreen : Screen() {
 @ExperimentalMaterial3Api
 @Composable
 fun OrderItemCard(item: SingleOrderItem) {
+    val imagesRepository = ImagesRepository()
     val orderViewModel: OrderViewModel = getViewModel()
     val dish by orderViewModel.dishesRepository.getById(item.dishId).observeAsState()
     var itemCount by remember { mutableStateOf(item.quantity) }
@@ -169,7 +179,8 @@ fun OrderItemCard(item: SingleOrderItem) {
                     .fillMaxWidth()
             ) {
                 WeightedColumnCenteredHorizontally(2f) {
-                    CircleShapeImage(painter = rememberAsyncImagePainter(model = "https://raw.githubusercontent.com/zucchero-sintattico/sushi-me/main/db/img/${dish!!.id}.jpg"),
+                    CircleShapeImage(painter = rememberAsyncImagePainter(imagesRepository.getDishImageLink(
+                        dish!!)),
                         size = 100.dp)
                 }
                 WeightedColumnCenteredHorizontally(4f) {

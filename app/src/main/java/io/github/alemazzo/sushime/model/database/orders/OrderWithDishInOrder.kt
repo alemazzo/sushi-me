@@ -9,7 +9,7 @@ class OrderWithDishInOrder(
     val order: Order,
     @Relation(
         parentColumn = "id",
-        entityColumn = "dishId"
+        entityColumn = "orderId"
     )
     val dishesInOrder: List<DishInOrder>,
 )

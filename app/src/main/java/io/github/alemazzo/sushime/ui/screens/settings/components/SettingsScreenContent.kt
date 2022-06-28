@@ -30,6 +30,5 @@ fun SettingsScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         UserAccountCard()
-        SettingsSection()
     }
 }

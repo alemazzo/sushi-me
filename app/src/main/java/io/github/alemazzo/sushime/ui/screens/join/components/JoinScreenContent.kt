@@ -1,12 +1,13 @@
 package io.github.alemazzo.sushime.ui.screens.join.components
 
-import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import io.github.alemazzo.sushime.config.Routes
@@ -57,15 +58,20 @@ fun ShowNormalContent(
         if (useCamera) {
             TextTitleLarge(name = "Scan your table's QR Code")
             Spacer(modifier = Modifier.height(16.dp))
-            QRScanner(onTextChange = {
-                Log.d("QRSCANNER", it)
-                when {
-                    isRestaurantQrCode(it) -> {
-                        Routes.RestaurantInfoRoute.navigate(navController,
-                            getRestaurantIdFromQrCodeContent(it)!!)
-                    }
-                    isTableQrCode(it) -> {
-                        code = getTableIdFromQrCode(it)!!
+            val context = LocalContext.current
+            QRScanner(onTextChange = { result ->
+                if (!isSushimeQRCode(result)) {
+                    Toast.makeText(context, "Not a Sushime QR Code", Toast.LENGTH_LONG).show()
+                } else {
+                    val content = getSushimeQRCodeContent(result)!!
+                    if (isRestaurantQrCode(content)) {
+                        val restaurantId = getRestaurantIdFromQrCodeContent(content)
+                        Routes.RestaurantInfoRoute.navigate(
+                            navigator = navController,
+                            restaurantId = restaurantId!!
+                        )
+                    } else if (isTableQrCode(content)) {
+                        code = getTableIdFromQrCode(content)!!
                         onStartLoading()
                         orderViewModel.joinTable(code) {
                             Routes.OrderMenuRoute.navigate(navController, code)
