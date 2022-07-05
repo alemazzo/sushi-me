@@ -2,10 +2,13 @@ package io.github.alemazzo.sushime.ui.screens.order_final_resume
 
 import android.os.Bundle
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
@@ -21,8 +24,7 @@ import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.ui.screens.order_info.OrderItemInfoCard
 import io.github.alemazzo.sushime.ui.screens.order_menu.viewmodel.OrderViewModel
 import io.github.alemazzo.sushime.ui.screens.restaurant_info.components.ShowDishInfo
-import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextTitleLarge
-import io.github.alemazzo.sushime.utils.CenteredColumn
+import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextBodyLarge
 import io.github.alemazzo.sushime.utils.DefaultTopAppBar
 import io.github.alemazzo.sushime.utils.getViewModel
 
@@ -52,7 +54,7 @@ object OrderFinalResumeScreen : Screen() {
         }
 
         val orders = orderViewModel.getUniqueOrdersList()
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.primaryContainer)
@@ -63,32 +65,27 @@ object OrderFinalResumeScreen : Screen() {
                     end = 8.dp
                 ),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-
-            LazyColumn(
-                modifier = Modifier.weight(4f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(orders) { item: SingleOrderItem ->
-                    val _dish by orderViewModel.dishesRepository.getById(item.dishId)
-                        .observeAsState()
-                    _dish?.let { dish ->
-                        OrderItemInfoCard(dish, amount = item.quantity, { selectedDish = dish })
-                    }
+            items(orders) { item: SingleOrderItem ->
+                val _dish by orderViewModel.dishesRepository.getById(item.dishId)
+                    .observeAsState()
+                _dish?.let { dish ->
+                    OrderItemInfoCard(dish, amount = item.quantity, { selectedDish = dish })
                 }
             }
 
-            CenteredColumn(modifier = Modifier.weight(1f)) {
+            item {
                 Button(onClick = {
                     orderViewModel.resetData()
                     navigator.backQueue.clear()
                     Routes.OrdersRoute.navigate(navigator)
                 }) {
-                    TextTitleLarge(name = "Close")
+                    TextBodyLarge("Close")
                 }
             }
         }
+
+
     }
 }

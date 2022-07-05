@@ -25,6 +25,7 @@ import io.github.alemazzo.sushime.ui.screens.restaurants.components.CircleShapeI
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.TextTitleLarge
 import io.github.alemazzo.sushime.utils.*
 import io.github.alemazzo.sushime.utils.qr.getQrCodeBitmap
+import io.github.alemazzo.sushime.utils.qr.getQrContentFromTableId
 
 @ExperimentalMaterial3Api
 object CreationScreen : Screen() {
@@ -84,6 +85,7 @@ fun ShowCircularProgressIndicator(paddingValues: PaddingValues) {
     }
 }
 
+
 @ExperimentalMaterial3Api
 @Composable
 fun CreationScreenContent(
@@ -94,7 +96,7 @@ fun CreationScreenContent(
     orderViewModel: OrderViewModel = getViewModel(),
 ) {
     val tableId = orderViewModel.tableId!!
-    val qrImage = getQrCodeBitmap(tableId)
+    val qrImage = getQrCodeBitmap(getQrContentFromTableId(tableId))
     Column(
         modifier = Modifier
             .fillMaxSize()

@@ -6,6 +6,8 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
 
+fun getQrContentFromTableId(tableId: String): String = "sushime://table/$tableId"
+
 fun isSushimeQRCode(content: String): Boolean =
     content.contains("://") && content.split("://")[0] == "sushime"
 

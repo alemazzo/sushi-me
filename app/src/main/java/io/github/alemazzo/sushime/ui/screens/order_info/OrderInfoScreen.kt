@@ -17,11 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
+import io.github.alemazzo.sushime.config.BottomBars
 import io.github.alemazzo.sushime.config.Routes
 import io.github.alemazzo.sushime.model.database.dishes.Dish
 import io.github.alemazzo.sushime.model.database.dishes_in_orders.DishInOrder
 import io.github.alemazzo.sushime.model.database.orders.OrderWithDishInOrder
 import io.github.alemazzo.sushime.model.database.restaurants.Restaurant
+import io.github.alemazzo.sushime.navigation.routing.Route
 import io.github.alemazzo.sushime.navigation.screen.Screen
 import io.github.alemazzo.sushime.ui.screens.restaurant_info.components.ShowDishInfo
 import io.github.alemazzo.sushime.ui.screens.restaurants.components.CircleShapeImage
@@ -36,9 +38,15 @@ import java.util.*
 @ExperimentalMaterial3Api
 object OrderInfoScreen : Screen() {
 
+
     var order: OrderWithDishInOrder? by mutableStateOf(null)
     var restaurant: Restaurant? by mutableStateOf(null)
 
+
+    @Composable
+    override fun BottomBar(navigator: NavHostController, currentRoute: Route) {
+        BottomBars.NavigateBottomBar.Get(currentRoute = Routes.OrdersRoute, navigator = navigator)
+    }
 
     @Composable
     override fun TopBar() {

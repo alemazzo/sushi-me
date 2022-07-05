@@ -37,6 +37,7 @@ import io.github.alemazzo.sushime.utils.CenteredColumn
 import io.github.alemazzo.sushime.utils.DefaultTopAppBar
 import io.github.alemazzo.sushime.utils.getViewModel
 import io.github.alemazzo.sushime.utils.qr.getQrCodeBitmap
+import io.github.alemazzo.sushime.utils.qr.getQrContentFromTableId
 
 
 @ExperimentalMaterial3Api
@@ -122,7 +123,7 @@ fun LoadingScreen(paddingValues: PaddingValues) {
 @Composable
 fun ShowQRInfo(showPopup: Boolean, onEnd: () -> Unit) {
     val orderViewModel: OrderViewModel = getViewModel()
-    val qrImage = getQrCodeBitmap(orderViewModel.tableId!!)
+    val qrImage = getQrCodeBitmap(getQrContentFromTableId(orderViewModel.tableId!!))
     if (showPopup) {
         BackPressHandler {
             onEnd()
